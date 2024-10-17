@@ -1,0 +1,122 @@
+.footer {
+  background-color: #fff;
+  box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.25);
+  margin-top: 158px;
+  padding: 12px 38px;
+}
+
+/* Improve footer content alignment and spacing */
+.footerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px; /* Added spacing between sections */
+}
+
+/* Ensure about section text is justified for better readability */
+.aboutSection {
+  max-width: 330px;
+}
+
+.aboutSection h3 {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+/* Justify text in the about section */
+.aboutText {
+  text-align: justify;
+  margin: 0; /* Ensure no default margins */
+  padding: 0; /* Ensure no default padding */
+  font-size: 12px; /* Adjust font size if needed */
+}
+
+.contactSection {
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  margin-top: 11px;
+}
+
+.contactSection h4 {
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-align: justify;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.icon {
+  width: 24px; /* Adjusted width for better visibility */
+  height: 24px; /* Adjusted height for better visibility */
+  object-fit: contain;
+}
+
+/* Style for QR Code section */
+.qrCode {
+  background-color: #808080;
+  margin-top: 15px;
+  margin-left: 500px;
+  color: #000;
+  width: 100px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  left: 50%; /* Move element's left edge to the middle of the parent */
+  transform: translateX(-690%); /* Shift element to the left by half its width */
+}
+
+/* Divider styling */
+.footerDivider {
+  background-color: #000;
+  height: 3px;
+  border: none;
+  margin: 9px 0;
+}
+
+/* Copyright styling */
+.copyright {
+  color: #000;
+  font-family: Inter, sans-serif;
+  font-size: 10px;
+  font-weight: 200;
+  text-align: center;
+}
+
+/* Justify text in the paragraph */
+.justified-text {
+  text-align: justify;
+  margin: 0;
+  padding: 0;
+  font-size: 12px; /* Adjusted font size for smaller text */
+}
+
+@media (max-width: 991px) {
+  .footer {
+    margin-top: 40px;
+    padding: 12px 20px;
+  }
+
+  .footerContent {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Added spacing between sections in column layout */
+  }
+
+  .aboutSection,
+  .contactSection,
+  .qrCode {
+    margin-bottom: 20px;
+  }
+
+  .icon {
+    width: 20px; /* Adjusted width for smaller screens */
+    height: 20px; /* Adjusted height for smaller screens */
+  }
+}

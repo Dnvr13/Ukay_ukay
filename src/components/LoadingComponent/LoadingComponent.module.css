@@ -1,0 +1,54 @@
+/* Smooth Animation Definitions */
+@keyframes fadeIn {
+  from {
+    opacity: 0; /* Start as fully transparent */
+  }
+  to {
+    opacity: 30; /* End as fully opaque */
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 30; /* Start as fully opaque */
+  }
+  to {
+    opacity: 0; /* End as fully transparent */
+  }
+}
+
+/* Animation Classes */
+.fadeIn {
+  animation: fadeIn 1.5s ease-in-out; /* Smooth fade-in over 1.5 seconds */
+}
+
+.fadeOut {
+  animation: fadeOut 1.5s ease-in-out; /* Smooth fade-out over 1.5 seconds */
+}
+
+/* Loading Component Styles */
+.loadingContainer {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  align-items: center;
+  padding: 65px 80px 225px;
+  /* Initially apply fadeIn animation if needed */
+  /* animation: fadeIn 1.5s ease-in-out; */
+}
+
+@media (max-width: 991px) {
+  .loadingContainer {
+    padding: 0 20px 100px;
+  }
+}
+
+.loadingImage {
+  aspect-ratio: 1;
+  object-fit: contain;
+  object-position: center;
+  width: 735px;
+  border-radius: 375px;
+  max-width: 100%;
+}
