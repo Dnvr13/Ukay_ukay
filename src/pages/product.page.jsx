@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { insertProductBackend } from '../backend/inventory.backend';
 import { useNavigate } from 'react-router-dom';
 import { useCheckUserLoggedUtil, useIsAdminUtil } from '../components/utilities';
@@ -6,10 +6,12 @@ import { useCheckUserLoggedUtil, useIsAdminUtil } from '../components/utilities'
 const ProductPage = () => {
     const nav = useNavigate()
     const {logged} = useCheckUserLoggedUtil()
-    const {isAdmin} = useIsAdminUtil()
-    if(!isAdmin && logged){
-        nav('/')
-    }
+    const {isAdmin} = useIsAdminUtil() 
+    useEffect(()=>{
+        if(!isAdmin || logged){
+            nav('/')
+        }
+    },)
 
     const [images, setImages] = useState([]);
     const [product, setProduct] = useState({
