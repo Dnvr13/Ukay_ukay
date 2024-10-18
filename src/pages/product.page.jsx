@@ -1,19 +1,31 @@
 import React, { useState } from 'react';
 import { insertProductBackend } from '../backend/inventory.backend';
-
-
+import { useNavigate } from 'react-router-dom';
+import { useCheckUserLoggedUtil, useIsAdminUtil } from '../components/utilities';
 
 const ProductPage = () => {
-    const [images, setImages] = useState([]);
-    const [product,setProduct] = useState({
-        name:'',
-        quantity:'',
-        price:''
-    });
-    const [loading,setLoading] = useState(false)
+    const nav = useNavigate()
+    const {logged} = useCheckUserLoggedUtil()
+    const {isAdmin} = useIsAdminUtil()
+    if(!isAdmin && logged){
+        nav('/')
+    }
 
-    const handleProductInputs=(e)=>{
-        setProduct({...product,[e.target.name]:e.target.value})
+    const [images, setImages] = useState([]);
+    const [product, setProduct] = useState({
+        name: '',
+        quantity: '',
+        price: '',
+        description:'',
+    });
+    const [loading, setLoading] = useState(false)
+    const [response, setResponse] = useState({
+        success:'',
+        message:''
+    })
+    
+    const handleProductInputs = (e) => {
+        setProduct({ ...product, [e.target.name]: e.target.value })
     }
 
     const handleImageChange = (event) => {
@@ -38,21 +50,22 @@ const ProductPage = () => {
     };
 
     const handleInsert = async () => {
-        if (images & product) {
-            setLoading(true);
-            const x = await insertProductBackend(images,product)
-            console.log(x)
+        setLoading(true);
+        const x = await insertProductBackend(images, product)
+        if (x.success) {
+            setProduct(null);
             setLoading(false);
-        } else {
-            console.log("false");
+            setResponse(x);
+        }else{
+            console.log(x.message)
         }
-
     }
 
 
     return (
         <>
-            <div className='m-5 bg-orange-200'>
+            <div className='m-5 bg-orange-200 rounded-lg'>
+                <p className={`${response.success?'bg-green-500':'bg-red-500'} font-medium m-3 text-3xl`}>{response.message}</p>
                 <h1 className='text-gray-700 font-medium px-2'>Product</h1>
                 <div className="space-y-4 p-4">
                     <div>
@@ -96,22 +109,38 @@ const ProductPage = () => {
                             placeholder='Product price'
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500 p-2"
                             step="0.01"
-                            min="0" 
+                            min="0"
                             required
                             onChange={handleProductInputs}
                         />
-                    </div>                    
+                    </div>
+
+                    <div>
+                        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                            Description:
+                        </label>
+                        <input
+                            id='description'
+                            type='text'
+                            name='description'
+                            placeholder='Product description'
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500 p-2"
+                            required
+                            onChange={handleProductInputs}
+                        />
+                    </div>
+
                 </div>
             </div>
-            <div className="m-5 bg-rose-200">        
+            <div className="m-5 bg-rose-200 rounded-lg">
                 <div className='m-5'>
                     <input
-                        type="file"
-                        multiple
+                        type="file"                        
                         onChange={handleImageChange}
                         className="hidden"
                         id="file-input"
                         accept="image/png, image/jpeg"
+                        disabled={images.length === 1}
                     />
                     <label htmlFor="file-input" className="cursor-pointer bg-rose-300 p-2 rounded-md">
                         Select Images
@@ -127,14 +156,13 @@ const ProductPage = () => {
                                 className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 m-1"
                             >
                                 X
-                            </button>
-                            <p>{image.name}</p>
+                            </button>                           
                             <p>{image.id}</p>
                         </div>
                     ))}
                 </div>
 
-                <button type='button' className={`bg-amber-300 rounded p-3 m-5 ${loading?'hidden':''}`} onClick={handleInsert}>Insert product</button>
+                <button type='button' className={`bg-amber-300 rounded p-3 m-5 ${loading ? 'hidden' : ''}`} onClick={handleInsert}>Insert product</button>
             </div>
         </>
 

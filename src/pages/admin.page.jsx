@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useProducts } from '../backend/inventory.backend';
+import React from 'react'
 
 
 const Admin = () => {

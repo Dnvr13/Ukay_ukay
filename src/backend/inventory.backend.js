@@ -5,6 +5,10 @@ export const insertProductBackend = async (images,product) => {
 
     try {
 
+        if(!images || !product){
+            throw new Error("Please input required the fields!")
+        }
+
         const { data: inventoryData, error: insertInventoryError } = await supabase
             .from('inventory')
             .insert({ name: product.name, quantity: product.quantity, price: product.price })
@@ -49,6 +53,37 @@ export const insertProductBackend = async (images,product) => {
     }
 
 }
+
+export const updateProductBackend = async(inventoryId,product)=>{
+    try {
+        
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+}
+
+export const deleteProductBackend = async(inventoryId)=>{
+    try {
+        if (!inventoryId) {
+            throw new Error("Inventory ID is required.");
+        }
+        const { error } = await supabase
+            .from('inventory')
+            .delete()
+            .eq('id', inventoryId); 
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        return { success: true, message: "Product deleted successfully!" };
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+}
+
+
+
 
 // Select all the products
 // usage

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import supabase from "../config/supabase.config";
 import Cookies from 'js-cookie';
 
-export const addToCartBackend = async (inventoryId, qty) => {
+export const addToFavoritesBackend = async (inventoryId) => {
 
     try {
         const token = Cookies.get("token")
@@ -13,7 +13,7 @@ export const addToCartBackend = async (inventoryId, qty) => {
         const uId = token.split('-')[0]
 
         const { data: itemExist, error: checkingItemError } = await supabase
-            .from('cart')
+            .from('favorites')
             .select('*')
             .eq("inventory_id", inventoryId)
             .eq("customer_id", uId)
@@ -23,32 +23,66 @@ export const addToCartBackend = async (inventoryId, qty) => {
         }
 
         if (itemExist && itemExist.length > 0) {
-            throw new Error("Item already exists in the cart.")
+            throw new Error("Item already exists in the favorites.")
         }
 
         const { data, error } = await supabase
-            .from('cart')
-            .insert({ inventory_id: inventoryId, customer_id: uId, quantity: qty })
+            .from('favorites')
+            .insert({ inventory_id: inventoryId, customer_id: uId })
 
         if (error) {
             throw new Error(error)
         }
 
-        return { success: true, message: "Item added to cart!" };
+        return { success: true, message: "Item added to favorites!" };
 
     } catch (error) {
         return { success: false, message: error.message }
     }
 }
 
+export const useRemoveFavItemBackend = () => {
+    const [response, setResponse] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-export const useCartBackend = () => {
-    const [cartItems, setCartItems] = useState([]);
+    const removeFavItem = async (id) => {
+        if (!id) {
+            throw new Error("Please specify the item to remove!");
+        }
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const { error: errorDelete } = await supabase
+                .from('favorites')
+                .delete()
+                .eq('id', id);
+
+            if (errorDelete) {
+                throw new Error(errorDelete.message || 'Failed to delete item');
+            }
+
+            setResponse("Item deleted successfully!");
+            window.location.reload(); 
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { response, loading, error, removeFavItem };
+};
+
+export const useFavoritesBackend = () => {
+    const [favItems, setFavItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchCartItems = async () => {
+        const fetchFavItems = async () => {
             setLoading(true);
             setError(null);
 
@@ -61,7 +95,7 @@ export const useCartBackend = () => {
                 const customerId = token.split('-')[0];
 
                 const { data, error } = await supabase
-                    .from('cart')
+                    .from('favorites')
                     .select(`
                         *,
                         inventory (
@@ -77,14 +111,13 @@ export const useCartBackend = () => {
 
                 const formattedData = data.map(item => ({
                     ...item,
-                    cat_id:item.id,
+                    fav_id:item.id,
                     name: item.inventory.name,
                     price: item.inventory.price,
-                    image: item.inventory.inventory_images[0]?.url,
-                    quantity: item.quantity,
+                    image: item.inventory.inventory_images[0]?.url,                    
                 }));
                 console.log(formattedData);
-                setCartItems(formattedData);
+                setFavItems(formattedData);
             } catch (error) {
                 setError(error.message);
                 console.error(error);
@@ -93,8 +126,8 @@ export const useCartBackend = () => {
             }
         };
 
-        fetchCartItems();
+        fetchFavItems();
     }, []);
 
-    return { cartItems, loading, error };
+    return { favItems, loading, error };
 };

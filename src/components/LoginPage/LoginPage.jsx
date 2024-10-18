@@ -6,11 +6,11 @@ import LoginForm from "./LoginForm";
 import Footer from "./Footer";
 import styles from "./LoginPage.module.css";
 import { useNavigate } from "react-router-dom";
-import { useCheckUserLogged } from "../utilities";
+import { useCheckUserLoggedUtil } from "../utilities";
 
 function LoginPage() {
   const nav = useNavigate()
-  const {logged} =useCheckUserLogged()
+  const {logged} =useCheckUserLoggedUtil()
   if(logged){
     nav('/')
   }

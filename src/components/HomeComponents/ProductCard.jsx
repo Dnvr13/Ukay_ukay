@@ -5,6 +5,7 @@ import React from "react";
 import styles from "./ProductCard.module.css";
 import { addToCartBackend } from "../../backend/cart.backend";
 import { useNavigate } from "react-router-dom";
+import { addToFavoritesBackend } from "../../backend/favorites.backend";
 
 const ProductCard = ({ id,name, price, images }) => {
   const navigate = useNavigate();
@@ -22,6 +23,17 @@ const ProductCard = ({ id,name, price, images }) => {
 
   }
 
+  const handleAddToFav =async()=>{
+    const data = await addToFavoritesBackend(id)
+    if(!data.success){
+      const x = data.message
+      if(x.includes('login')){
+        navigate('/login')
+      }
+      console.error(x);      
+    }
+  }
+
   return (
     <article className={styles.productCard}>
       <div className={styles.imageContainer}>
@@ -31,6 +43,7 @@ const ProductCard = ({ id,name, price, images }) => {
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/b534bed50392e7abd0b6b3cf183230c606d44f07501b1a2aceaa352bae29ec39?placeholderIfAbsent=true&apiKey=63cef383af9641cc969e43f7e6acc6c2"
             alt="Favorite"
             className={styles.icon}
+            onClick={handleAddToFav}
           />
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/f93964d5116e9e36c04417dbf5d1bd6cfe839f8720d48900fe9c35ca4956c37c?placeholderIfAbsent=true&apiKey=63cef383af9641cc969e43f7e6acc6c2"

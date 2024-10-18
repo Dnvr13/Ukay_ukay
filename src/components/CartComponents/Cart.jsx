@@ -27,7 +27,7 @@ function Cart() {
             />
           </div>
           <div className={styles.contentColumn}>
-            {loading || error? (
+            {cartItems.length === 0 || loading || error? (
               <EmptyCart /> // If cart is empty, show EmptyCart component
             ) : (
               <ul className="bg-slate-300 shadow-md rounded-md p-4">

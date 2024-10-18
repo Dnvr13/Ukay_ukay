@@ -2,16 +2,21 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './LoginForm.module.css';
 import SocialIcons from './SocialIcons';
-import {loginBackend} from '../../backend/auth.backend';
+import { loginBackend } from '../../backend/auth.backend';
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const [loginForm, setLoginForm] = useState({
-    emailOrUsername:"",
-    password:""
+    emailOrUsername: "",
+    password: ""
   });
+
+  const [response,setResponse] = useState({
+    success:'',
+    message:''
+  })
 
 
   const handleSubmit = async (e) => {
@@ -20,14 +25,20 @@ function LoginForm() {
 
     if (response.success) {
       console.log("login success");
-      navigate("/")
+      if (!response.isAdmin) {
+        navigate("/")
+      }
+      else {
+        navigate("/admin")
+      }
     } else {
+      setResponse(response)
       console.error(response.message)
     }
   };
 
-  const handleLoginForm =(e)=>{
-    setLoginForm({...loginForm,[e.target.name]:e.target.value})
+  const handleLoginForm = (e) => {
+    setLoginForm({ ...loginForm, [e.target.name]: e.target.value })
   }
 
   const handleForgotPasswordClick = () => {
@@ -46,6 +57,7 @@ function LoginForm() {
     <>
       <form className={styles.loginContainer} onSubmit={handleSubmit}>
         <h1 className={styles.loginTitle}>Log In</h1>
+        <h2 className='text-red-500 text-sm my-2'>{response.message}</h2>
         <input
           id="emailOrUsername"
           className={styles.inputField}

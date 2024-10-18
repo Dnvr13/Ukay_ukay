@@ -4,6 +4,13 @@ import Cookies from 'js-cookie';
 
 export const loginBackend = async (emailOrUsername, password) => {
     try {
+
+        if(!emailOrUsername || !password){
+            throw new Error("Please provide the credentials!")
+        }
+
+        const isAdmin = emailOrUsername.toLowerCase().includes('admin');
+
         const { data, error } = await supabase
             .from("customers")
             .select("id,username")
@@ -19,8 +26,13 @@ export const loginBackend = async (emailOrUsername, password) => {
         }
         const expirationDate = new Date();
         expirationDate.setHours(expirationDate.getHours() + 3);
-        Cookies.set("token", `${data[0].id}-${data[0].username}`, { expires:expirationDate });
-        return { success: true, data };
+        if(!isAdmin){
+            Cookies.set("token", `${data[0].id}-${data[0].username}`, { expires:expirationDate });
+        }else{
+            Cookies.set('admin',true, { expires:expirationDate })
+        }
+        
+        return { success: true, isAdmin };
     } catch (err) {
         return { success: false, message: err.message };
     }

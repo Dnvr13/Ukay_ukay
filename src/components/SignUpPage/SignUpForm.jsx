@@ -42,7 +42,7 @@ function SignUpForm() {
     }else{
       const response = await signupBackend(signupForm.username,signupForm.pass)
       if(response.success){
-        setSuccessMessage(response.message)
+        navigate('/login')
       }else{
         setSuccessMessage(response.message)
       }
