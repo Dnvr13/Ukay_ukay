@@ -2,43 +2,59 @@ import { useEffect, useState } from "react";
 import supabase from "../config/supabase.config";
 import Cookies from 'js-cookie';
 
-export const addToFavoritesBackend = async (inventoryId) => {
+export const useAddToFavoritesBackend = () => {
+    const [response, setResponse] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    try {
-        const token = Cookies.get("token")
-        if (!token) {
-            throw new Error("Please login to continue!")
+    const addToFavorites = async (inventoryId) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+
+            if (!inventoryId) {
+                throw new Error("Please specify the item to add to favorites!");
+            }
+
+            const token = Cookies.get("token")
+            if (!token) {
+                throw new Error("Please login to continue!")
+            }
+
+            const uId = token.split('-')[0]
+
+            const { data: itemExist, error: checkingItemError } = await supabase
+                .from('favorites')
+                .select('*')
+                .eq("inventory_id", inventoryId)
+                .eq("customer_id", uId)
+
+            if (checkingItemError) {
+                throw new Error(checkingItemError)
+            }
+
+            if (itemExist && itemExist.length > 0) {
+                throw new Error("Item already exists in the favorites.")
+            }
+
+            const { data, error } = await supabase
+                .from('favorites')
+                .insert({ inventory_id: inventoryId, customer_id: uId })
+
+            if (error) {
+                throw new Error(error)
+            }
+
+            setResponse("Item added to favorites!");
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
-
-        const uId = token.split('-')[0]
-
-        const { data: itemExist, error: checkingItemError } = await supabase
-            .from('favorites')
-            .select('*')
-            .eq("inventory_id", inventoryId)
-            .eq("customer_id", uId)
-
-        if (checkingItemError) {
-            throw new Error(checkingItemError)
-        }
-
-        if (itemExist && itemExist.length > 0) {
-            throw new Error("Item already exists in the favorites.")
-        }
-
-        const { data, error } = await supabase
-            .from('favorites')
-            .insert({ inventory_id: inventoryId, customer_id: uId })
-
-        if (error) {
-            throw new Error(error)
-        }
-
-        return { success: true, message: "Item added to favorites!" };
-
-    } catch (error) {
-        return { success: false, message: error.message }
     }
+
+    return {response,loading,error,addToFavorites};
 }
 
 export const useRemoveFavItemBackend = () => {
@@ -65,7 +81,7 @@ export const useRemoveFavItemBackend = () => {
             }
 
             setResponse("Item deleted successfully!");
-            window.location.reload(); 
+            window.location.reload();
         } catch (err) {
             setError(err.message);
         } finally {
@@ -111,10 +127,10 @@ export const useFavoritesBackend = () => {
 
                 const formattedData = data.map(item => ({
                     ...item,
-                    fav_id:item.id,
+                    fav_id: item.id,
                     name: item.inventory.name,
                     price: item.inventory.price,
-                    image: item.inventory.inventory_images[0]?.url,                    
+                    image: item.inventory.inventory_images[0]?.url,
                 }));
                 console.log(formattedData);
                 setFavItems(formattedData);

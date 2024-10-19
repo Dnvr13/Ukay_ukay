@@ -15,7 +15,7 @@ export const useIsAdminUtil =()=>{
     const [isAdmin, setIsAdmin] = useState(false);  
     useEffect(()=>{
         const admin = Cookies.get('admin')
-        setIsAdmin(!!admin) 
+        setIsAdmin(admin) 
     },[])
     return {isAdmin};
 }

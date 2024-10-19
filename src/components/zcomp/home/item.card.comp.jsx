@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { addToCartBackend } from "../../../backend/cart.backend";
+import { useAddToCartBackend } from "../../../backend/cart.backend";
 
 
 const ItemCard = ({id, name, price, images}) => {
     const navigate = useState();
+    const { response, loading, error: errorAddCart, addToCart } = useAddToCartBackend();
 
-    const handleAddToCart = async () => {
-        const data = await addToCartBackend(id, 1)
-
-        if (!data.success) {
-            const x = data.message;
+    const handleAddToCart = async () => {       
+        await addToCart(id, 1)
+        if (errorAddCart) {
+            const x = errorAddCart;
             if (x.includes('login')) {
                 navigate('/login')
             }

@@ -1,86 +1,135 @@
 import { useEffect, useState } from "react";
 import supabase from "../config/supabase.config";
 
-export const insertProductBackend = async (images,product) => {
+export const useInsertProductBackend = () => {
+    const [response, setResponse] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    try {
+    const insertProduct = async (images, product) => {
+        setLoading(true)
+        setError(null)
+        try {
+            if (!images && !product) {
+                throw new Error("Please input required the fields!")
+            }
 
-        if(!images || !product){
-            throw new Error("Please input required the fields!")
+            const { data: inventoryData, error: insertInventoryError } = await supabase
+                .from('inventory')
+                .insert({ name: product.name, quantity: product.quantity, price: product.price,description:product.description })
+                .select()
+
+            if (insertInventoryError) {
+                throw new Error(`Error inserting product: ${insertInventoryError.message}`);
+            }
+
+            const directoryImageForProduct = `${inventoryData[0].id}-${inventoryData[0].name}`
+            const uploads = await uploadImages(images, directoryImageForProduct)
+            if (!uploads || uploads.length === 0) {
+                throw new Error("No images were uploaded.");
+            }
+
+            const fetchImagesData = await fetchImages(directoryImageForProduct);
+            const urls = await Promise.all(fetchImagesData.map(async (image) => {
+                return await getPublicUrl(`images/${directoryImageForProduct}/${image.name}`);
+            }));
+
+            if (!urls || urls.length === 0) {
+                throw new Error("Could not fetch the image public url.")
+            }
+
+            const inventoryImageArray = urls.map((url) => ({
+                url: url,
+                inventory_id: inventoryData[0].id
+            }))
+
+            const { data: inventoryImagesData, error: insertInventoryImagesError } = await supabase
+                .from('inventory_images')
+                .insert(inventoryImageArray)
+                .select()
+            if (insertInventoryImagesError || !inventoryImagesData || inventoryImagesData.length === 0) {
+                throw new Error(`Error inserting product images: ${insertInventoryImagesError?.message || 'No data returned'}`);
+            }
+            setResponse("Product added successfully!");
         }
-
-        const { data: inventoryData, error: insertInventoryError } = await supabase
-            .from('inventory')
-            .insert({ name: product.name, quantity: product.quantity, price: product.price })
-            .select()
-
-        if (insertInventoryError) {
-            throw new Error(`Error inserting product: ${insertInventoryError.message}`);
+        catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
-
-        const directoryImageForProduct = `${inventoryData[0].id}-${inventoryData[0].name}`
-        const uploads = await uploadImages(images, directoryImageForProduct)
-        if (!uploads || uploads.length === 0) {
-            throw new Error("No images were uploaded.");
-        }
-
-        const fetchImagesData = await fetchImages(directoryImageForProduct);
-        const urls = await Promise.all(fetchImagesData.map(async (image) => {
-            return await getPublicUrl(`images/${directoryImageForProduct}/${image.name}`);
-        }));
-
-        if(!urls || urls.length === 0){
-            throw new Error("Could not fetch the image public url.")
-        }
-
-        const inventoryImageArray = urls.map((url)=>({
-            url:url,
-            inventory_id:inventoryData[0].id
-        }))
-
-        const {data:inventoryImagesData,error:insertInventoryImagesError} = await supabase
-        .from('inventory_images')
-        .insert(inventoryImageArray)
-        .select()
-        if (insertInventoryImagesError || !inventoryImagesData || inventoryImagesData.length === 0) {
-            throw new Error(`Error inserting product images: ${insertInventoryImagesError?.message || 'No data returned'}`);
-        }
-
-        return {success:true,message:"Product added successfully!"}
-
-    } catch (error) {
-        return { success: false, message: error.message };
     }
+
+    return { response, loading, error, insertProduct }
 
 }
 
-export const updateProductBackend = async(inventoryId,product)=>{
-    try {
-        
-    } catch (error) {
-        return { success: false, message: error.message };
+export const useUpdateProductBackend = () => {
+    const [response, setResponse] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const updateProduct = async (inventoryId, product) => {
+        setLoading(true);
+        setError(null);
+        try {
+            if (!inventoryId || !product) {
+                throw new Error("Please provide the required data!");
+            }
+            const { error: updateError } = await supabase
+                .from('inventory')
+                .update({ name: product.name, quantity: product.quantity, price: product.price })
+                .eq('id', inventoryId);
+
+            if (updateError) {
+                throw new Error(updateError.message || "Failed to update the product.");
+            }
+
+            setResponse("Updated successfully!");
+
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     }
+
+    return { response, loading, error, updateProduct }
 }
 
-export const deleteProductBackend = async(inventoryId)=>{
-    try {
-        if (!inventoryId) {
-            throw new Error("Inventory ID is required.");
-        }
-        const { error } = await supabase
-            .from('inventory')
-            .delete()
-            .eq('id', inventoryId); 
+export const useRemoveProductBackend = () => {
+    const [response, setResponse] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-        if (error) {
-            throw new Error(error.message);
-        }
+    const removeProduct = async (inventoryId) => {
+        setLoading(true);
+        setError(null);
+        try {
+            if (!inventoryId) {
+                throw new Error("Inventory ID is required.");
+            }
+            const { error: errorDelete } = await supabase
+                .from('inventory')
+                .delete()
+                .eq('id', inventoryId);
 
-        return { success: true, message: "Product deleted successfully!" };
-    } catch (error) {
-        return { success: false, message: error.message };
+            if (errorDelete) {
+                throw new Error(errorDelete.message || 'Failed to delete item');
+            }
+
+            setResponse("Item deleted successfully!");
+            window.location.reload();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     }
+
+    return { response, loading, error, removeProduct };
+
 }
+
 
 
 
@@ -93,7 +142,7 @@ export const useProductsBackend = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
 
     useEffect(() => {
         const fetchProducts = async () => {

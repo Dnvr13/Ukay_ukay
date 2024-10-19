@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./Favorites.module.css"; // Adjust the path as needed
 import Header from "./Header";
 import EmptyCart from "./EmptyCart"; // This can be renamed to something like "EmptyFavorites" if needed
 import Footer from "./Footer";
 import useStore from "../store/zustandStore"; // Import Zustand store
 import { useFavoritesBackend, useRemoveFavItemBackend } from "../../backend/favorites.backend";
+import { useIsAdminUtil } from "../utilities";
+import { useNavigate } from "react-router-dom";
 
 function Favorites() {
+  const {isAdmin} = useIsAdminUtil();
+  const nav = useNavigate();
   const favoriteItems = useStore((state) => state.favoriteItems);
   const { favItems, loading: fetchLoading, error: fetchError } = useFavoritesBackend()
   const {response,loading: removeLoading,error: removeError, removeFavItem}  = useRemoveFavItemBackend()
@@ -15,6 +19,12 @@ function Favorites() {
     const itemId = e.target.dataset.id
     await removeFavItem(itemId)
   }
+
+  useEffect(()=>{
+    if(isAdmin){
+      nav('/admin')
+    }
+  })
 
   return (
     <main className={styles.favorites}>

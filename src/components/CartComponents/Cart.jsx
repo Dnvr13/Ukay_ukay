@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Cart.module.css";
 import Header from "./Header";
 import EmptyCart from "./EmptyCart";
 import Footer from "./Footer";
 import useStore from "../store/zustandStore";
 import { useCartBackend } from "../../backend/cart.backend";
+import { useIsAdminUtil } from "../utilities";
+import { useNavigate } from "react-router-dom";
 
 function Cart() {
   const [items, setItems] = useState([])
@@ -12,6 +14,13 @@ function Cart() {
   // if(!error){
   //   setItems(cartItems)
   // }
+  const { isAdmin } = useIsAdminUtil();
+  const nav = useNavigate();
+  useEffect(() => {
+    if (isAdmin) {
+      nav('/admin')
+    }
+  })
 
   return (
     <main className={styles.cart}>
@@ -27,7 +36,7 @@ function Cart() {
             />
           </div>
           <div className={styles.contentColumn}>
-            {cartItems.length === 0 || loading || error? (
+            {cartItems.length === 0 || loading || error ? (
               <EmptyCart /> // If cart is empty, show EmptyCart component
             ) : (
               <ul className="bg-slate-300 shadow-md rounded-md p-4">

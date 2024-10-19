@@ -1,29 +1,29 @@
 import React, { useState } from "react";
-import { addToCartBackend } from "../../../backend/cart.backend";
+import { useAddToCartBackend } from "../../../backend/cart.backend";
 import { useNavigate } from "react-router-dom";
 
 
-const FeaturedProductComp = ({ id,name, price, created_at, images }) => {
+const FeaturedProductComp = ({ id, name, price, created_at, images }) => {
     const [quantity, setQuantity] = useState(0);
     const incrementQuantity = () => setQuantity((prev) => prev + 1);
     const decrementQuantity = () => setQuantity((prev) => Math.max(0, prev - 1));
     const navigate = useNavigate();
+    const { response, loading, error: errorAddCart, addToCart } = useAddToCartBackend();
 
-    const handleAddToCart = async ()=>{
-        if(quantity===0){
+    const handleAddToCart = async () => {
+        if (quantity === 0) {
             return;
         }
-        const data = await addToCartBackend(id,quantity)
-    
-        if(!data.success){
-          const x = data.message;
-          if(x.includes('login')){
-            navigate('/login')
-          }
-          console.error(x);
+        await addToCart(id, quantity)
+        if (errorAddCart) {
+            const x = errorAddCart;
+            if (x.includes('login')) {
+                navigate('/login')
+            }
+            console.error(x);
         }
-    
-      }
+
+    }
 
     return (
         <section className="mb-10">

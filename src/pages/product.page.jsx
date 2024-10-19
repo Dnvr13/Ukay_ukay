@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { insertProductBackend } from '../backend/inventory.backend';
+import { useInsertProductBackend } from '../backend/inventory.backend';
 import { useNavigate } from 'react-router-dom';
 import { useCheckUserLoggedUtil, useIsAdminUtil } from '../components/utilities';
+import Cookies from 'js-cookie';
 
 const ProductPage = () => {
     const nav = useNavigate()
-    const {logged} = useCheckUserLoggedUtil()
-    const {isAdmin} = useIsAdminUtil() 
-    useEffect(()=>{
-        if(!isAdmin || logged){
+    const { logged } = useCheckUserLoggedUtil()
+    const { isAdmin } = useIsAdminUtil()
+
+    const { response: responseBackend, loading: loadingBackend, error: errorBackend, insertProduct } = useInsertProductBackend()
+
+    useEffect(() => {
+        if (!isAdmin && (!logged || logged)) {
             nav('/')
         }
     },)
@@ -18,14 +22,9 @@ const ProductPage = () => {
         name: '',
         quantity: '',
         price: '',
-        description:'',
+        description: '',
     });
-    const [loading, setLoading] = useState(false)
-    const [response, setResponse] = useState({
-        success:'',
-        message:''
-    })
-    
+
     const handleProductInputs = (e) => {
         setProduct({ ...product, [e.target.name]: e.target.value })
     }
@@ -51,23 +50,29 @@ const ProductPage = () => {
         setImages(images.filter((image) => image.id !== id));
     };
 
-    const handleInsert = async () => {
-        setLoading(true);
-        const x = await insertProductBackend(images, product)
-        if (x.success) {
-            setProduct(null);
-            setLoading(false);
-            setResponse(x);
-        }else{
-            console.log(x.message)
-        }
+    const handleInsert = async (e) => {
+        e.preventDefault();
+        await insertProduct(images, product)
+        setImages([]);
+        setProduct({
+            name: '',
+            quantity: '',
+            price: '',
+            description: '',
+        });
+    }
+
+    const logout = ()=>{
+        Cookies.remove('admin')
+        window.location.reload();
     }
 
 
     return (
-        <>
+        <form onSubmit={handleInsert}>
+              <button type="button" class="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded" onClick={logout}>Logout</button>
             <div className='m-5 bg-orange-200 rounded-lg'>
-                <p className={`${response.success?'bg-green-500':'bg-red-500'} font-medium m-3 text-3xl`}>{response.message}</p>
+                <p className={`${!errorBackend ? 'bg-green-500' : 'bg-red-500'} font-medium m-3 text-3xl`}>{!errorBackend ? responseBackend : errorBackend}</p>
                 <h1 className='text-gray-700 font-medium px-2'>Product</h1>
                 <div className="space-y-4 p-4">
                     <div>
@@ -137,7 +142,7 @@ const ProductPage = () => {
             <div className="m-5 bg-rose-200 rounded-lg">
                 <div className='m-5'>
                     <input
-                        type="file"                        
+                        type="file"
                         onChange={handleImageChange}
                         className="hidden"
                         id="file-input"
@@ -158,15 +163,15 @@ const ProductPage = () => {
                                 className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 m-1"
                             >
                                 X
-                            </button>                           
+                            </button>
                             <p>{image.id}</p>
                         </div>
                     ))}
                 </div>
 
-                <button type='button' className={`bg-amber-300 rounded p-3 m-5 ${loading ? 'hidden' : ''}`} onClick={handleInsert}>Insert product</button>
+                <button type='submit' className={`bg-amber-300 rounded p-3 m-5 ${loadingBackend ? 'hidden' : ''}`}>Insert product</button>
             </div>
-        </>
+        </form>
 
     );
 }

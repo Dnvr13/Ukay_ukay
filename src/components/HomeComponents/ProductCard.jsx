@@ -3,34 +3,42 @@
  */
 import React from "react";
 import styles from "./ProductCard.module.css";
-import { addToCartBackend } from "../../backend/cart.backend";
+import { useAddToCartBackend } from "../../backend/cart.backend";
 import { useNavigate } from "react-router-dom";
-import { addToFavoritesBackend } from "../../backend/favorites.backend";
+import { useAddToFavoritesBackend } from "../../backend/favorites.backend";
 
-const ProductCard = ({ id,name, price, images }) => {
+const ProductCard = ({ id, name, price, images }) => {
   const navigate = useNavigate();
+  const { response: responseFav, loading: loadingFav, error: errorFav, addToFavorites } = useAddToFavoritesBackend();
+  const { response: responseCart, loading: loadingCart, error: errorCart, addToCart } = useAddToCartBackend();
 
-  const handleAddToCart = async ()=>{
-    const data = await addToCartBackend(id,1)
+  const handleAddToCart = async () => {
+    const data = await addToCart(id, 1)
 
-    if(!data.success){
-      const x = data.message;
-      if(x.includes('login')){
+    if (errorCart) {
+      const x = errorCart
+      if (x.includes('login')) {
+        navigate('/login')
+      }
+      console.log(errorCart)
+    }
+  }
+
+  const handleAddToFav = async () => {
+    const data = await addToFavorites(id)
+    if (!data.success) {
+      const x = data.message
+      if (x.includes('login')) {
         navigate('/login')
       }
       console.error(x);
     }
-
-  }
-
-  const handleAddToFav =async()=>{
-    const data = await addToFavoritesBackend(id)
-    if(!data.success){
-      const x = data.message
-      if(x.includes('login')){
+    if (errorFav) {
+      const x = errorFav
+      if (x.includes('login')) {
         navigate('/login')
       }
-      console.error(x);      
+      console.log(errorFav)
     }
   }
 
