@@ -4,23 +4,28 @@ import Header from "./Header";
 import EmptyCart from "./EmptyCart";
 import Footer from "./Footer";
 import useStore from "../store/zustandStore";
-import { useCartBackend } from "../../backend/cart.backend";
+import { useCartBackend, useCartCheckoutBackend } from "../../backend/cart.backend";
 import { useIsAdminUtil } from "../utilities";
 import { useNavigate } from "react-router-dom";
 
 function Cart() {
   const [items, setItems] = useState([])
   const { cartItems, loading, error } = useCartBackend()
-  // if(!error){
-  //   setItems(cartItems)
-  // }
+  const {response,loading:loadingCheckout,error:errorCheckout,checkout} = useCartCheckoutBackend();
+
   const { isAdmin } = useIsAdminUtil();
   const nav = useNavigate();
   useEffect(() => {
     if (isAdmin) {
       nav('/admin')
     }
-  })
+  },[isAdmin,nav])
+
+  const handleCartCheckout = async()=>{
+    await checkout(cartItems);
+    console.log(loadingCheckout)
+    console.log(errorCheckout)
+  }
 
   return (
     <main className={styles.cart}>
@@ -50,11 +55,12 @@ function Cart() {
                     </div>
                   </li>
                 ))}
+                 <button className={`bg-orange-500 text-white font-medium p-3 ${loadingCheckout?'hidden':''}`} onClick={handleCartCheckout}>Checkout</button>
               </ul>
             )}
-          </div>
+          </div>          
         </div>
-      </section>
+      </section>    
       <Footer />
     </main>
   );

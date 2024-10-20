@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useInsertProductBackend } from '../backend/inventory.backend';
 import { useNavigate } from 'react-router-dom';
-import { useCheckUserLoggedUtil, useIsAdminUtil } from '../components/utilities';
 import Cookies from 'js-cookie';
 
 const ProductPage = () => {
-    const nav = useNavigate()
-    const { logged } = useCheckUserLoggedUtil()
-    const { isAdmin } = useIsAdminUtil()
-
+    const nav = useNavigate()   
     const { response: responseBackend, loading: loadingBackend, error: errorBackend, insertProduct } = useInsertProductBackend()
-
     useEffect(() => {
-        if (!isAdmin && (!logged || logged)) {
+        const admin = Cookies.get('admin')    
+        if(admin){}else{
             nav('/')
         }
-    },)
+    }, [nav])
+
 
     const [images, setImages] = useState([]);
     const [product, setProduct] = useState({
@@ -62,7 +59,7 @@ const ProductPage = () => {
         });
     }
 
-    const logout = ()=>{
+    const logout = () => {
         Cookies.remove('admin')
         window.location.reload();
     }
@@ -70,7 +67,7 @@ const ProductPage = () => {
 
     return (
         <form onSubmit={handleInsert}>
-              <button type="button" class="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded" onClick={logout}>Logout</button>
+            <button type="button" className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded" onClick={logout}>Logout</button>
             <div className='m-5 bg-orange-200 rounded-lg'>
                 <p className={`${!errorBackend ? 'bg-green-500' : 'bg-red-500'} font-medium m-3 text-3xl`}>{!errorBackend ? responseBackend : errorBackend}</p>
                 <h1 className='text-gray-700 font-medium px-2'>Product</h1>

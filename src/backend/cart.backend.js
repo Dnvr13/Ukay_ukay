@@ -185,22 +185,24 @@ export const useCartCheckoutBackend = () => {
 
             const { data: orderDetailData, error: errorAddOrderDetails } = await supabase
                 .from('order_details')
-                .insert({total_price:totalCartPrice,customer_id:uId})
+                .insert({ total_price: totalCartPrice, customer_id: uId })
                 .select()
 
             if (errorAddOrderDetails) {
                 throw new Error(errorAddOrderDetails)
             }
 
-            const modifiedCart = cart.map((item) => ({
-                ...item,
-                order_detail_id: orderDetailData.id,
+            const orderDetailId = orderDetailData[0].id
+            const modifiedCart = cart.map(item => ({
+                order_detail_id: orderDetailId,
                 inventory_id: item.inventory_id,
                 quantity: item.quantity,
                 price: item.price,
                 total_price: item.total_price,
-                customer_id:uId
+                customer_id: uId
             }));
+
+            console.log(modifiedCart);
 
             const { error: errorAddOrders } = await supabase
                 .from("orders")
@@ -210,7 +212,18 @@ export const useCartCheckoutBackend = () => {
                 throw new Error(errorAddOrders)
             }
 
+            // empty the customer cart
+            const { error: errorCart } = await supabase
+                .from('cart')
+                .delete()
+                .eq('customer_id', uId);
+
+            if (errorCart) {
+                throw new Error(errorCart)
+            }
+
             setResponse("Successfully checkout!")
+            window.location.reload();
 
         } catch (error) {
             setError(error.message);

@@ -24,7 +24,7 @@ function Favorites() {
     if(isAdmin){
       nav('/admin')
     }
-  })
+  },[isAdmin,nav])
 
   return (
     <main className={styles.favorites}>

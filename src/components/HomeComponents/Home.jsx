@@ -23,7 +23,7 @@ const UkayUkayOnlineShop = () => {
     if (isAdmin) {
       nav('/admin')
     }
-  })
+  },[isAdmin,nav])
 
   return (
     <div className={styles.ukayUkayOnlineShop}>

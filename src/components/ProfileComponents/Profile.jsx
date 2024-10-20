@@ -17,7 +17,7 @@ const Profile = () => {
     if (isAdmin) {
       nav('/admin')
     }
-  })
+  },[isAdmin,nav])
   return (
     <div className={styles.profileContainer}>
       <Header />

@@ -6,13 +6,17 @@ import LoginForm from "./LoginForm";
 import Footer from "./Footer";
 import styles from "./LoginPage.module.css";
 import { useNavigate } from "react-router-dom";
-import { useCheckUserLoggedUtil } from "../utilities";
+import { useCheckUserLoggedUtil, useIsAdminUtil } from "../utilities";
 
 function LoginPage() {
   const nav = useNavigate()
   const {logged} =useCheckUserLoggedUtil()
+  const {isAdmin}  = useIsAdminUtil()
   if(logged){
     nav('/')
+  }
+  if(isAdmin){
+    nav('/admin')
   }
 
   return (

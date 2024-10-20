@@ -13,7 +13,7 @@ const Items = () => {
     if (isAdmin) {
       nav('/admin')
     }
-  })
+  },[isAdmin,nav])
   return (
     <div className={styles.app}>
       <Header />
