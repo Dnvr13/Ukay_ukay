@@ -7,17 +7,29 @@ import ProfileSidebar from "./ProfileSidebar";
 import styles from "./Profile.module.css";
 import Header from "./Header";
 import Footer from "./Footer";
-import { useIsAdminUtil } from "../utilities";
+import { useCheckUserLoggedUtil, useIsAdminUtil } from "../utilities";
 import { useNavigate } from "react-router-dom";
+import { useCustomerBackend } from "../../backend/customer.backend";
+import { toast } from "sonner";
 
 const Profile = () => {
   const { isAdmin } = useIsAdminUtil();
+  const { logged } = useCheckUserLoggedUtil();
   const nav = useNavigate();
+  const {customer,loading,error} = useCustomerBackend()
+
   useEffect(() => {
-    if (isAdmin) {
-      nav('/admin')
-    }
-  },[isAdmin,nav])
+    const timeoutId = setTimeout(() => {
+      if (isAdmin) {
+        nav('/admin');
+      } else if (!logged) {
+        nav('/login');
+      }
+    }, 1000);
+  
+    return () => clearTimeout(timeoutId);
+  }, [isAdmin, logged, nav]);
+
   return (
     <div className={styles.profileContainer}>
       <Header />
@@ -26,6 +38,7 @@ const Profile = () => {
         <ProfileSidebar />
         <Footer />
       </main>
+      <h1 className="text-2xl bg-rose-200">{customer[0].username}</h1>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import styles from "./SignUpForm.module.css";
 import { signupBackend } from "../../backend/auth.backend";
+import { toast } from "sonner";
 
 
 
@@ -9,6 +10,7 @@ function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showRetypePassword, setShowRetypePassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState(""); // New state for success message
+  const [loading, setLoading] = useState(false)
 
   const [signupForm, setSignupForm] = useState({
     username: "",
@@ -36,19 +38,23 @@ function SignUpForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if(signupForm.pass !== signupForm.confirmPass){
-      setSuccessMessage("Password does not matched!");
-    }else{
-      const response = await signupBackend(signupForm.username,signupForm.pass)
-      if(response.success){
+
+    if (signupForm.pass !== signupForm.confirmPass) {
+      // setSuccessMessage("Password does not matched!");
+      toast.error('Password does not matched!')
+    } else {
+      setLoading(true);
+      const response = await signupBackend(signupForm.username, signupForm.pass)
+      if (response.success) {
+        setLoading(false);
         navigate('/login')
-      }else{
+      } else {
         setSuccessMessage(response.message)
+        toast.error(response.message)
       }
     }
 
-    
+
 
   };
 
@@ -105,7 +111,7 @@ function SignUpForm() {
             {showRetypePassword ? "Hide" : "Show"}
           </button>
         </div>
-        <button type="submit" className={styles.signUpButton}>
+        <button type="submit" className={styles.signUpButton} disabled={loading}>
           Sign Up
         </button>
         {successMessage && (

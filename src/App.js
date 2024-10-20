@@ -13,6 +13,7 @@ import HomeTest from './pages/home.page';
 import ProductPage from './pages/product.page';
 import Favorites from './components/FavoritesComponents/Favorites';
 import Profile from './components/ProfileComponents/Profile';
+import { Toaster } from 'sonner';
 
 function App() {
 
@@ -34,21 +35,31 @@ function App() {
       ) : (
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ResetPasswordForm />} />
           <Route path="/loading" element={<LoadingComponent isFadingOut={true} />} />
           <Route path="/home" element={<Home />} /> {/* Existing Home Route */}
           <Route path="/items" element={<Items />} /> {/* New Items Route */}
-          <Route path='/admin' element={<ProductPage/>} />
-          <Route path='/profile' element={<Profile/>} />        
-          <Route path='/cart' element={<Cart/>} />
-          <Route path='/test' element={<HomeTest/>} />
-          <Route path='/favorites' element={<Favorites/>} />
-          <Route path='*' element={<NotFound/>} />
+          <Route path='/admin' element={<ProductPage />} />
+          <Route path='/profile' element={<Profile />} />
+          <Route path='/cart' element={<Cart />} />
+          <Route path='/test' element={<HomeTest />} />
+          <Route path='/favorites' element={<Favorites />} />
+          <Route path='*' element={<NotFound />} />
 
         </Routes>
       )}
+
+      <Toaster position="top-right"
+      toastOptions={{      
+        classNames: {
+          error: 'bg-red-300',
+          success: 'text-green-300',
+          warning: 'text-yellow-300',
+          info: 'bg-blue-300',
+        },
+      }}/>
     </Router>
   );
 
