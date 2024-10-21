@@ -24,6 +24,7 @@ export const useCustomerBackend = () => {
                     .from('customers')
                     .select('*')
                     .eq('id', uId)                
+                    .single()
                 setCustomer(data);
 
             } catch (err) {
@@ -40,20 +41,39 @@ export const useCustomerBackend = () => {
 }
 
 
-export const useUpdateCustomerInfo = ()=>{
-    const [response,setResponse] =useState(null)
-    const [loading,setLoading] = useState(false)
-    const [error,setError] = useState(null)
-    
-    const updateInfo = async(userInfo)=>{
+export const useUpdateCustomerInfoBackend = () => {
+    const [response, setResponse] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const updateInfo = async (userInfo) => {
+        setLoading(true);
+
         try {
-            
+            if (!userInfo) {
+                throw new Error("Provide your information!");
+            }
+
+            console.log(userInfo);
+
+            const { data, error: errorUpdate } = await supabase
+                .from('customers')
+                .update({name:userInfo.name,email:userInfo.email,contact_no:userInfo.contact_no,address:userInfo.address})
+                .eq('id',userInfo.id)
+                .single();
+
+            if (errorUpdate) {
+                throw new Error(errorUpdate.message || "Failed to update customer info");
+            }
+
+            setResponse("Successfully updated!");
         } catch (err) {
             setError(err.message);
+            console.error(err.message)
         } finally {
             setLoading(false);
         }
-    }
+    };
 
-    return {response,loading,error,updateInfo}
-}
+    return { response, loading, error, updateInfo };
+};

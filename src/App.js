@@ -59,7 +59,8 @@ function App() {
           warning: 'text-yellow-300',
           info: 'bg-blue-300',
         },
-      }}/>
+      }}
+      richColors  />
     </Router>
   );
 
