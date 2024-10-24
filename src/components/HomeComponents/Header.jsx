@@ -3,46 +3,16 @@
  */
 import React from "react";
 import styles from "./Header.module.css";
+import Logo from "./Logo";
+import Navigation from "./Navigation";
+import SearchBar from "./SearchBar";
 
 const Header = () => {
   return (
     <header className={styles.header}>
-      <img
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/c6d0a7a6f1e9238ee939c4890c892dfaf179c0c3228dd98cc1712dad2439eb75?placeholderIfAbsent=true&apiKey=63cef383af9641cc969e43f7e6acc6c2"
-        alt="Ukay-Ukay Online Shop Logo"
-        className={styles.logo}
-      />
-      <nav className={styles.navigation}>
-        <ul className={styles.navList}>
-          <li className={styles.navItem}>
-            <a href="/home" className={styles.navLink}>
-              Home
-            </a>
-          </li>
-          <li className={styles.navItem}>
-            <a href="/items" className={styles.navLink}>
-              Items
-            </a>
-          </li>
-          <li className={styles.navItem}>
-            <a href="/favorites" className={styles.navLink}>
-              Favorites
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <div className={styles.iconContainer}>
-        <img
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/b0b08067804ca89a1b6cf3448b8be68a3e89887390f8b2dbbc76ecd317a869c7?placeholderIfAbsent=true&apiKey=63cef383af9641cc969e43f7e6acc6c2"
-          alt="Cart Icon"
-          className={styles.icon}
-        />
-        <img
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/33cdcc102817ea360229dcfcdc8a447263763fa6ffef6a2fa137038febb3db6d?placeholderIfAbsent=true&apiKey=63cef383af9641cc969e43f7e6acc6c2"
-          alt="User Profile Icon"
-          className={styles.icon}
-        />
-      </div>
+      <Logo />
+      <Navigation />
+      <SearchBar />
     </header>
   );
 };

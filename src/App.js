@@ -34,7 +34,7 @@ function App() {
         <LoadingComponent isFadingOut={false} />
       ) : (
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ResetPasswordForm />} />
