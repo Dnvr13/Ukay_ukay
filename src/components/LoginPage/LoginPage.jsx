@@ -7,17 +7,21 @@ import Footer from "./Footer";
 import styles from "./LoginPage.module.css";
 import { useNavigate } from "react-router-dom";
 import { useCheckUserLoggedUtil, useIsAdminUtil } from "../utilities";
+import { useEffect } from "react";
 
 function LoginPage() {
   const nav = useNavigate()
   const {logged} =useCheckUserLoggedUtil()
   const {isAdmin}  = useIsAdminUtil()
-  if(logged){
-    nav('/')
-  }
-  if(isAdmin){
-    nav('/admin')
-  }
+
+  useEffect(()=>{
+    if(isAdmin){
+      nav('/admin')
+    }else if(logged){
+      nav('/')
+    }
+
+  },[isAdmin,logged,nav])
 
   return (
     <div className={styles.loginPage}>

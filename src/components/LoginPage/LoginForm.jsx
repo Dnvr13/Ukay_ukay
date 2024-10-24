@@ -46,7 +46,7 @@ function LoginForm() {
   };
 
   const handleSignUpClick = () => {
-    navigate('/sign-up');
+    navigate('/signup');
   };
 
   const handleTogglePassword = () => {

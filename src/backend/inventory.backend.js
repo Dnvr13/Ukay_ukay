@@ -96,6 +96,9 @@ export const useUpdateProductBackend = () => {
     return { response, loading, error, updateProduct }
 }
 
+
+
+// this will throws an error because it is contstraint in its child it is like a inheritance (parent-child) in programming 
 export const useRemoveProductBackend = () => {
     const [response, setResponse] = useState(null);
     const [loading, setLoading] = useState(false);

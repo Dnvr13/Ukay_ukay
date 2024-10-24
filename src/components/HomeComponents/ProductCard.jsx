@@ -13,8 +13,7 @@ const ProductCard = ({ id, name, price, images }) => {
   const { response: responseCart, loading: loadingCart, error: errorCart, addToCart } = useAddToCartBackend();
 
   const handleAddToCart = async () => {
-    const data = await addToCart(id, 1)
-
+     await addToCart(id, 1)
     if (errorCart) {
       const x = errorCart
       if (x.includes('login')) {
@@ -25,14 +24,7 @@ const ProductCard = ({ id, name, price, images }) => {
   }
 
   const handleAddToFav = async () => {
-    const data = await addToFavorites(id)
-    if (!data.success) {
-      const x = data.message
-      if (x.includes('login')) {
-        navigate('/login')
-      }
-      console.error(x);
-    }
+   await addToFavorites(id)   
     if (errorFav) {
       const x = errorFav
       if (x.includes('login')) {
