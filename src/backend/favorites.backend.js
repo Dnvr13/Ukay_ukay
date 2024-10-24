@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import supabase from "../config/supabase.config";
 import Cookies from 'js-cookie';
+import { toast } from "sonner";
 
 export const useAddToFavoritesBackend = () => {
     const [response, setResponse] = useState(null);
@@ -46,8 +47,10 @@ export const useAddToFavoritesBackend = () => {
                 throw new Error(error)
             }
 
+            toast.success("Item added to favorites!")
             setResponse("Item added to favorites!");
         } catch (err) {
+            // toast.error(err.message)
             setError(err.message);
         } finally {
             setLoading(false);

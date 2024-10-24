@@ -3,14 +3,51 @@
  */
 import React from "react";
 import styles from "./ProductCard.module.css";
+import { useAddToFavoritesBackend } from "../../backend/favorites.backend";
+import { useAddToCartBackend } from "../../backend/cart.backend";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
-const ProductCard = ({ name, price,images }) => {
+const ProductCard = ({ id, name, price, images }) => {
+  const navigate = useNavigate();
+  const { response: responseFav, loading: loadingFav, error: errorFav, addToFavorites } = useAddToFavoritesBackend();
+  const { response: responseCart, loading: loadingCart, error: errorCart, addToCart } = useAddToCartBackend();
+
+  const handleAddToCart = async () => {
+    await addToCart(id, 1)
+    if (errorCart) {
+      const x = errorCart
+      if (x.includes('login')) {
+        navigate('/login')
+      }
+      console.log(errorCart)
+      toast.error(x)
+    }
+
+    if (responseCart) {
+      toast.success(responseCart)
+    }
+
+  }
+
+  const handleAddToFav = async () => {
+    await addToFavorites(id)
+    if (errorFav) {
+      const x = errorFav
+      if (x.includes('login')) {
+        navigate('/login')
+      }       
+      console.error(x);
+    }   
+  }
+
+
   return (
     <article className={styles.productCard}>
       <div className={styles.imageContainer}>
         <img
           src={images[0].url}
-          alt={name}         
+          alt={name}
           className={styles.productImage}
         />
         <div className={styles.iconContainer}>
@@ -19,13 +56,15 @@ const ProductCard = ({ name, price,images }) => {
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/70245941bb73899a924cb846573511ac995eda3fc8417140ae188af89f4acb34?placeholderIfAbsent=true&apiKey=63cef383af9641cc969e43f7e6acc6c2"
               alt=""
               className={styles.icon}
+              onClick={handleAddToFav}
             />
           </button>
-          <button className={styles.iconButton} aria-label="Share product">
+          <button className={styles.iconButton} aria-label="Add to cart">
             <img
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/2f2492b859c1fe47f068155e6fb38d7ef642bc6ae100fee952a93185f29e0aa3?placeholderIfAbsent=true&apiKey=63cef383af9641cc969e43f7e6acc6c2"
               alt=""
               className={styles.icon}
+              onClick={handleAddToCart}
             />
           </button>
         </div>
