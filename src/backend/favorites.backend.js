@@ -50,7 +50,7 @@ export const useAddToFavoritesBackend = () => {
             toast.success("Item added to favorites!")
             setResponse("Item added to favorites!");
         } catch (err) {
-            // toast.error(err.message)
+            toast.error(err.message)
             setError(err.message);
         } finally {
             setLoading(false);

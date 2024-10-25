@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import supabase from "../config/supabase.config";
 import Cookies from 'js-cookie';
+import { toast } from "sonner";
 
 export const useAddToCartBackend = () => {
     const [response, setResponse] = useState(null);
@@ -49,10 +50,11 @@ export const useAddToCartBackend = () => {
             if (error) {
                 throw new Error(error)
             }
-
+            toast.success("Item added to cart!");
             setResponse("Item added to cart!");
 
         } catch (err) {
+            toast.error(err.message)
             setError(err.message);
         } finally {
             setLoading(false);
@@ -86,9 +88,11 @@ export const useCartRemoveBackend = () => {
                 throw new Error(errorDelete.message || 'Failed to delete item');
             }
 
+            toast.success("Item removed successfully!");
             setResponse("Item deleted successfully!");
             window.location.reload();
         } catch (err) {
+            toast.error(err.message);
             setError(err.message);
         } finally {
             setLoading(false);

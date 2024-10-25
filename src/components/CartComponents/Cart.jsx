@@ -4,27 +4,34 @@ import Header from "./Header";
 import EmptyCart from "./EmptyCart";
 import Footer from "./Footer";
 import useStore from "../store/zustandStore";
-import { useCartBackend, useCartCheckoutBackend } from "../../backend/cart.backend";
+import { useCartBackend, useCartCheckoutBackend, useCartRemoveBackend } from "../../backend/cart.backend";
 import { useIsAdminUtil } from "../utilities";
 import { useNavigate } from "react-router-dom";
 
 function Cart() {
   const [items, setItems] = useState([])
   const { cartItems, loading, error } = useCartBackend()
-  const {response,loading:loadingCheckout,error:errorCheckout,checkout} = useCartCheckoutBackend();
+  const { response: responseCheckout, loading: loadingCheckout, error: errorCheckout, checkout } = useCartCheckoutBackend();
+  const { response: responseRemoveItem, loading: loadingRemoveItem, error: errorRemoveItem, cartRemove } = useCartRemoveBackend();
+
 
   const { isAdmin } = useIsAdminUtil();
   const nav = useNavigate();
   useEffect(() => {
     if (isAdmin) {
-      nav('/admin')
+      nav('/admin');
     }
-  },[isAdmin,nav])
+  }, [isAdmin, nav]);
 
-  const handleCartCheckout = async()=>{
+  const handleCartCheckout = async () => {
     await checkout(cartItems);
     console.log(loadingCheckout)
     console.log(errorCheckout)
+  }
+
+  const handleItemRemoved = async (e) => {
+    const itemId = e.target.dataset.id
+    await cartRemove(itemId)
   }
 
   return (
@@ -46,21 +53,24 @@ function Cart() {
             ) : (
               <ul className="bg-slate-300 shadow-md rounded-md p-4">
                 {cartItems.map((item, index) => (
-                  <li key={index} className="flex items-center bg-white rounded-lg p-3 mb-2 shadow-sm">
+                  <li key={index} className="flex items-center bg-white rounded-lg p-3 mb-2 shadow-sm relative">
                     <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-md" />
                     <div className="ml-4 flex-grow">
                       <h3 className="text-lg font-semibold">{item.name}</h3>
                       <p className="text-gray-700">{item.price}</p>
                       <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                     </div>
+                    <button className={`bg-rose-300 text-slate-700 text-sm p-2 rounded-md hover:bg-red-500 ${loadingRemoveItem ? "hidden" : ""}`} data-id={item.id} onClick={handleItemRemoved}>
+                      Remove
+                    </button>
                   </li>
                 ))}
-                 <button className={`bg-orange-500 text-white font-medium p-3 ${loadingCheckout?'hidden':''}`} onClick={handleCartCheckout}>Checkout</button>
+                <button className={`bg-orange-500 text-white font-medium p-3 ${loadingCheckout ? 'hidden' : ''}`} onClick={handleCartCheckout}>Checkout</button>
               </ul>
             )}
-          </div>          
+          </div>
         </div>
-      </section>    
+      </section>
       <Footer />
     </main>
   );
