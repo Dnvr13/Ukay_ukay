@@ -61,6 +61,47 @@ export const useAddToCartBackend = () => {
         }
     }
 
+    // add to cart that uses db function
+    const addToCartDbFunction = async (inventoryId, qty) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const token = Cookies.get("token")
+            if (!token) {
+                throw new Error("Please login to continue!")
+            }
+            const uId = token.split('-')[0]
+
+
+            if (!inventoryId) {
+                throw new Error("Please specify the item to add to cart!")
+            }
+
+            if (!qty) {
+                qty = 1; // set the value if null
+            }
+
+            const { error } = await
+                supabase.rpc('add_to_cart', { invnt_id: inventoryId, customer_id: uId, qnty: qty })
+
+            if (error) {
+                throw new Error(error)
+            }
+            toast.success("Item added to cart!");
+            setResponse("Item added to cart!");
+
+        } catch (err) {
+            toast.error(err.message)
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
+
+
     return { response, loading, error, addToCart };
 }
 
@@ -142,6 +183,7 @@ export const useCartBackend = () => {
                     name: item.inventory.name,
                     price: item.inventory.price,
                     image: item.inventory.inventory_images[0]?.url,
+                    product_quantity: item.inventory.quantity,  // added product_quantity to check the qnty of the product when checking out
                     quantity: item.quantity,
                     total_price: item.inventory.price * item.quantity
                 }));
@@ -187,6 +229,13 @@ export const useCartCheckoutBackend = () => {
                 return total + item.total_price;
             }, 0);
 
+            // check if the product quantity is greater than or equal to the cart item qnty else it will throw an error of the specified product
+            cart.forEach(item => {
+                if (item.product_quantity < item.quantity) {
+                    throw new Error(`Insufficient quantity for product: ${item.name}!\nPlease try to decrease the cart item quantity.`);
+                }
+            });
+
             const { data: orderDetailData, error: errorAddOrderDetails } = await supabase
                 .from('order_details')
                 .insert({ total_price: totalCartPrice, customer_id: uId })
@@ -216,6 +265,15 @@ export const useCartCheckoutBackend = () => {
                 throw new Error(errorAddOrders)
             }
 
+            // updating the product quantity 
+            for (const item of cart) {
+                const { error } = await supabase.rpc('update_p_quantity', { invnt_id: item.inventory_id, pqnty: item.quantity });
+                if (error) {
+                    throw new Error(error);
+                }
+            }
+            
+
             // empty the customer cart
             const { error: errorCart } = await supabase
                 .from('cart')
@@ -226,10 +284,12 @@ export const useCartCheckoutBackend = () => {
                 throw new Error(errorCart)
             }
 
+            toast.success("Successfully checkout!") // toast for now, suggest to have a success checkout page
             setResponse("Successfully checkout!")
             window.location.reload();
 
         } catch (error) {
+            toast.error(error.message)
             setError(error.message);
             console.error(error);
         } finally {

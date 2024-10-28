@@ -140,45 +140,22 @@ export const useRemoveProductBackend = () => {
 // Select all the products
 // usage
 // const { products, loading, error } = useProducts();
-//
 export const useProductsBackend = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-
     useEffect(() => {
         const fetchProducts = async () => {
+            setLoading(true);
             try {
-                const { data: productsData, error: fetchError } = await supabase
-                    .from('inventory')
-                    .select('*');
-
-                if (fetchError) {
-                    throw new Error(fetchError.message);
-                }
-
-                // Fetch product images concurrently
-                const productsWithImages = await Promise.all(productsData.map(async (product) => {
-                    const { data: productImages, error: imagesError } = await supabase
-                        .from('inventory_images')
-                        .select('url')
-                        .eq('inventory_id', product.id);
-
-                    if (imagesError) {
-                        throw new Error(imagesError.message);
-                    }
-
-                    return {
-                        ...product,
-                        images: productImages || []
-                    };
-                }));
-
-
-                console.log(productsWithImages)
-
-                setProducts(productsWithImages);
+                const productsData = await fetchProductsData();
+                const productsWithImages = await fetchProductsWithImages(productsData);
+             
+                // Filter out products with quantity of 0
+                const filteredProducts = productsWithImages.filter(product => product.quantity > 0);
+                console.log(filteredProducts)
+                setProducts(filteredProducts);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -187,7 +164,39 @@ export const useProductsBackend = () => {
         };
 
         fetchProducts();
-    }, []); // Empty dependency array to run once on mount
+    }, []); // Runs once on mount
+
+    const fetchProductsData = async () => {
+        const { data: productsData, error: fetchError } = await supabase
+            .from('inventory')
+            .select('*');
+
+        if (fetchError) {
+            throw new Error(fetchError.message);
+        }
+
+        return productsData;
+    };
+
+    const fetchProductsWithImages = async (productsData) => {
+        return Promise.all(productsData.map(async (product) => {
+            const images = await fetchProductImages(product.id);
+            return { ...product, images };
+        }));
+    };
+
+    const fetchProductImages = async (inventoryId) => {
+        const { data: productImages, error: imagesError } = await supabase
+            .from('inventory_images')
+            .select('url')
+            .eq('inventory_id', inventoryId);
+
+        if (imagesError) {
+            throw new Error(imagesError.message);
+        }
+
+        return productImages || [];
+    };
 
     return { products, loading, error };
 };
