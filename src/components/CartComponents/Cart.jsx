@@ -30,7 +30,7 @@ function Cart() {
   }
 
   const handleItemRemoved = async (e) => {
-    const itemId = e.target.dataset.id
+    const itemId = e.currentTarget.dataset.id;
     await cartRemove(itemId)
   }
 

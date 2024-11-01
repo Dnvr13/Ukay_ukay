@@ -5,24 +5,22 @@ import { useProductsBackend } from "../backend/inventory.backend";
 import FeaturedProductComp from "../components/zcomp/home/feat.comp";
 import ProductGridComp from "../components/zcomp/home/grid.comp";
 
-const HomeTest = () => {
-  const { products, loading, error } = useProductsBackend();
+const HomePage = () => {
+  const { products, loading } = useProductsBackend();
   const featProduct = products[Math.floor(Math.random() * products.length)];
   return (
     <div className="flex flex-col min-h-screen bg-gray-300">
-    <HeaderComp/>      
+      <HeaderComp />
       <main className="flex-grow p-5 md:p-10">
         {/* Featured Product Section */}
-      <FeaturedProductComp {...featProduct}/>
-
+        <FeaturedProductComp {...featProduct} />
         {/* Product Grid Section */}
-        <ProductGridComp products ={products}/>
+        <ProductGridComp products={products} loading={loading}/>
       </main>
-
       {/* Footer */}
-      <FooterComp/>
+      <FooterComp />
     </div>
   );
 };
 
-export default HomeTest;
+export default HomePage;

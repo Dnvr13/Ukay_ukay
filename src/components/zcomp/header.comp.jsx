@@ -1,17 +1,16 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const HeaderComp = () => {
-  const nav = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation(); // Get the current location
 
-  const toCart =()=>{
-    nav("/cart")
-  }
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
 
-  const toProf =()=>{
-    nav('/profile')
-  }
-
+  // Function to check if the current path matches the button's path
+  const isActive = (path) => location.pathname === path;
 
   return (
     <header className="bg-white flex flex-col md:flex-row items-center justify-between p-5 md:p-6 lg:p-8 shadow-sm">
@@ -21,29 +20,47 @@ const HeaderComp = () => {
         alt="Ukay-Ukay Online Shop Logo"
         className="aspect-ratio[1.02] object-contain w-[172px] rounded-full max-w-full mb-4 md:mb-0"
       />
-      
+
       {/* Navigation */}
       <nav className="flex items-center gap-10 text-black text-xl md:gap-8 mb-4 md:mb-0">
-        <a href="/" className="no-underline hover:underline">Home</a>
-        <div className="flex flex-col items-center">
-          <a href="/items" className="no-underline hover:underline">Items</a>
-          <div className="bg-black h-[2px] w-full mt-2" />
-        </div>
-        <a href="/favorites" className="no-underline hover:underline">Favorites</a>
-        <button className="bg-none border-none cursor-pointer p-0" aria-label="Notifications">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/0184b8cae3527568127b7e97a0144a16299b34746c0072e4f70631560363ead8?placeholderIfAbsent=true&apiKey=63cef383af9641cc969e43f7e6acc6c2"
-            alt=""
-            className="w-[42px] aspect-ratio[1] object-contain shadow-lg"
-          onClick={toCart}/>
+        <button
+          onClick={() => handleNavigation("/")}
+          className={`no-underline ${isActive("/") || isActive("/home") ? "font-bold border-b-2 border-light-blue-500 text-light-blue-700" : ""} hover:underline`}
+        >
+          Home
         </button>
-        <button className="bg-none border-none cursor-pointer p-0" aria-label="User Profile">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/9b067702305adfd602a0b6f1791cdcc451ae43eb4211b5b1a467b0d4a74d7784?placeholderIfAbsent=true&apiKey=63cef383af9641cc969e43f7e6acc6c2"
-            alt=""
-            onClick={toProf}
-            className="w-[42px] aspect-ratio[1] object-contain shadow-lg"
-          />
+        <div className="flex flex-col items-center">
+          <button
+            onClick={() => handleNavigation("/items")}
+            className={`no-underline ${isActive("/items") ? "font-bold border-b-2 border-light-blue-500 text-light-blue-700" : ""} hover:underline`}
+          >
+            Items
+          </button>
+        </div>
+        <button
+          onClick={() => handleNavigation("/favorites")}
+          className={`no-underline ${isActive("/favorites") ? "font-bold border-b-2 border-light-blue-500 text-light-blue-700" : ""} hover:underline`}
+        >
+          Favorites
+        </button>
+        <button
+          onClick={() => handleNavigation("/cart")}
+          className="bg-none border-none cursor-pointer p-0"
+          aria-label="Notifications"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={`w-8 h-8 text-gray-700 ${isActive("/cart") && "font-bold border-b-2 border-light-blue-500 text-light-blue-700"}`}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h18l-1.5 9H5.25L4.5 6H3zM16.5 21a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm-9 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+          </svg>
+        </button>
+        <button
+          onClick={() => handleNavigation("/profile")}
+          className="bg-none border-none cursor-pointer p-0"
+          aria-label="User Profile"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className={`w-8 h-8 text-gray-700 ${isActive("/profile") && "font-bold border-b-2 border-light-blue-500 text-light-blue-700"}`} viewBox="0 0 16 16">
+            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+            <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+          </svg>
         </button>
       </nav>
 
@@ -56,12 +73,10 @@ const HeaderComp = () => {
           placeholder="Search here"
           className="flex-grow border-none text-base font-sans bg-transparent placeholder-black"
         />
-        <button type="submit" className="bg-none border-none cursor-pointer p-0" aria-label="Search">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/dc278ee9417268e666bdd5c83a565a3a9025f4edddb59cf14a62d0e4ac199f9d?placeholderIfAbsent=true&apiKey=63cef383af9641cc969e43f7e6acc6c2"
-            alt=""
-            className="w-[26px] aspect-ratio[0.81] object-contain"
-          />
+        <button type="submit" className="bg-none border-none cursor-pointer p-0" aria-label="Search">        
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="w-[26px] aspect-ratio[0.81] object-contain" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+          </svg>
         </button>
       </div>
     </header>
