@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAddToCartBackend } from "../../../backend/cart.backend";
 import { useNavigate } from "react-router-dom";
+import { dateFormatterAgo } from "../../utilities";
 
 
 const FeaturedProductComp = ({ id, name, price, created_at, images }) => {
@@ -34,7 +35,7 @@ const FeaturedProductComp = ({ id, name, price, created_at, images }) => {
                 </div>
                 <div className="flex flex-col">
                     <h2 className="text-4xl font-bold">{name}</h2>
-                    <p className="text-lg text-black">{created_at}</p>
+                    <p className="text-lg text-black">{dateFormatterAgo(created_at)}</p>
                     <p className="text-2xl mt-4">₱ {price}</p>
                     <div className="flex gap-4 mt-5">
                         <button onClick={() => setQuantity((prev) => prev + 1)} className="text-6xl">+</button>

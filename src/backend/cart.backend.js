@@ -203,6 +203,60 @@ export const useCartBackend = () => {
     return { cartItems, loading, error };
 };
 
+
+export const useSelectedCustomerCartBackend = (customerId) => {
+    const [cartItems, setCartItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchCartItems = async () => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                
+                const { data, error } = await supabase
+                    .from('cart')
+                    .select(`
+                        *,
+                        inventory (
+                            *,
+                            inventory_images (url)
+                        )
+                    `)
+                    .eq('customer_id', customerId); // Use customerId from token
+
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                const formattedData = data.map(item => ({
+                    ...item,
+                    cat_id: item.id,
+                    name: item.inventory.name,
+                    price: item.inventory.price,
+                    image: item.inventory.inventory_images[0]?.url,
+                    product_quantity: item.inventory.quantity,  // added product_quantity to check the qnty of the product when checking out
+                    quantity: item.quantity,
+                    total_price: item.inventory.price * item.quantity
+                }));
+                console.log(formattedData);
+                setCartItems(formattedData);
+            } catch (error) {
+                setError(error.message);
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCartItems();
+    }, []);
+
+    return { cartItems, loading, error };
+};
+
 export const useCartCheckoutBackend = () => {
     const [response, setResponse] = useState(null);
     const [loading, setLoading] = useState(false);

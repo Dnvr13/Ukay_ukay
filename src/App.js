@@ -18,6 +18,7 @@ import ItemsPage from './pages/item.page';
 import FavoritesPage from './pages/favorites.page';
 import CartPage from './pages/cart.page';
 import ProfilePage from './pages/profile.page';
+import Admin from './pages/admin.page';
 
 function App() {
 
@@ -49,7 +50,7 @@ function App() {
           <Route path='/profile' element={<ProfilePage />} />
           <Route path='/cart' element={<CartPage />} />
           <Route path='/favorites' element={<FavoritesPage />} />
-          <Route path='/test' element={<Favorites />} />
+          <Route path='/test' element={<Admin />} />
           <Route path='*' element={<NotFound />} />
 
         </Routes>

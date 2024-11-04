@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import supabase from "../config/supabase.config";
+import { toast } from "sonner";
 
 export const useInsertProductBackend = () => {
     const [response, setResponse] = useState(null);
@@ -16,7 +17,7 @@ export const useInsertProductBackend = () => {
 
             const { data: inventoryData, error: insertInventoryError } = await supabase
                 .from('inventory')
-                .insert({ name: product.name, quantity: product.quantity, price: product.price,description:product.description })
+                .insert({ name: product.name, quantity: product.quantity, price: product.price, description: product.description })
                 .select()
 
             if (insertInventoryError) {
@@ -50,9 +51,12 @@ export const useInsertProductBackend = () => {
             if (insertInventoryImagesError || !inventoryImagesData || inventoryImagesData.length === 0) {
                 throw new Error(`Error inserting product images: ${insertInventoryImagesError?.message || 'No data returned'}`);
             }
+            toast.success("Product added successfully!");
             setResponse("Product added successfully!");
+        
         }
         catch (err) {
+            toast.error(err.message);
             setError(err.message);
         } finally {
             setLoading(false);
@@ -77,16 +81,18 @@ export const useUpdateProductBackend = () => {
             }
             const { error: updateError } = await supabase
                 .from('inventory')
-                .update({ name: product.name, quantity: product.quantity, price: product.price })
+                .update({ name: product.name, quantity: product.quantity, price: product.price, description: product.description })
                 .eq('id', inventoryId);
 
             if (updateError) {
                 throw new Error(updateError.message || "Failed to update the product.");
             }
-
+            toast.success("Updatd successfully!");
             setResponse("Updated successfully!");
+            // window.location.reload();
 
         } catch (err) {
+            toast.error(err.message);
             setError(err.message);
         } finally {
             setLoading(false);
@@ -139,33 +145,36 @@ export const useRemoveProductBackend = () => {
 
 // Select all the products
 // usage
-// const { products, loading, error } = useProducts();
+// const { products, loading, error,refreshProducts } = useProducts();
 export const useProductsBackend = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            setLoading(true);
-            try {
-                const productsData = await fetchProductsData();
-                const productsWithImages = await fetchProductsWithImages(productsData);
-             
-                // Filter out products with quantity of 0
-                const filteredProducts = productsWithImages.filter(product => product.quantity > 0);
-                console.log(filteredProducts)
-                setProducts(filteredProducts);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    // Function to fetch products
+    const fetchProducts = async () => {
+        setLoading(true);
+        try {
+            const productsData = await fetchProductsData();
+            const productsWithImages = await fetchProductsWithImages(productsData);
 
+            // Filter out products with quantity of 0
+            const filteredProducts = productsWithImages.filter(product => product.quantity > 0);
+            // console.log(filteredProducts);
+            setProducts(filteredProducts);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Fetch products on mount
+    useEffect(() => {
         fetchProducts();
     }, []); // Runs once on mount
 
+    // Function to fetch product data from Supabase
     const fetchProductsData = async () => {
         const { data: productsData, error: fetchError } = await supabase
             .from('inventory')
@@ -178,6 +187,7 @@ export const useProductsBackend = () => {
         return productsData;
     };
 
+    // Function to fetch images for each product
     const fetchProductsWithImages = async (productsData) => {
         return Promise.all(productsData.map(async (product) => {
             const images = await fetchProductImages(product.id);
@@ -185,6 +195,7 @@ export const useProductsBackend = () => {
         }));
     };
 
+    // Function to fetch images for a specific product
     const fetchProductImages = async (inventoryId) => {
         const { data: productImages, error: imagesError } = await supabase
             .from('inventory_images')
@@ -198,7 +209,12 @@ export const useProductsBackend = () => {
         return productImages || [];
     };
 
-    return { products, loading, error };
+    // Refresh function to re-fetch products
+    const refreshProducts = () => {
+        fetchProducts();
+    };
+
+    return { products, loading, error, refreshProducts };
 };
 
 const uploadImages = async (images, directory) => {
