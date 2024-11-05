@@ -19,19 +19,39 @@ import FavoritesPage from './pages/favorites.page';
 import CartPage from './pages/cart.page';
 import ProfilePage from './pages/profile.page';
 import Admin from './pages/admin.page';
+import Cookies from 'js-cookie';
 
 function App() {
 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000); // Adjust timing if necessary
+    const checkAdminCookie = () => {
+      const admin = Cookies.get('admin');
+      const token = Cookies.get('token');
+      const currentLocation = window.location.pathname; // Corrected to get the current path
+
+      // Redirect if not an admin and not on the admin page
+      if (!admin && currentLocation === '/admin') {
+        window.location.href = '/login';
+      }else if(!admin && !token && currentLocation === '/profile'){
+        window.location.href = '/login';
+      }
+    };
+
+    const startLoadingTimer = () => {
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 2000); // Adjust timing if necessary
+
+      return timer;
+    };
+
+    checkAdminCookie();
+    const timer = startLoadingTimer();
 
     return () => clearTimeout(timer);
   }, []);
-
 
   return (
     <Router>
@@ -46,7 +66,7 @@ function App() {
           <Route path="/loading" element={<LoadingComponent isFadingOut={true} />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/items" element={<ItemsPage />} />
-          <Route path='/admin' element={<ProductPage />} />
+          <Route path='/admin' element={<Admin />} />
           <Route path='/profile' element={<ProfilePage />} />
           <Route path='/cart' element={<CartPage />} />
           <Route path='/favorites' element={<FavoritesPage />} />
@@ -62,7 +82,7 @@ function App() {
             error: 'bg-red-300',
             success: 'text-green-300',
             warning: 'text-yellow-300',
-            info: 'bg-blue-300'          
+            info: 'bg-blue-300'
           },
         }}
         richColors />

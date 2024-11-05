@@ -2,6 +2,7 @@ import React from "react";
 import ProductComp from "./products/products.comp";
 import DashboardComp from "./dashboard.comp";
 import CustomerComp from "./customers/customers.comp";
+import OrdersAdminComp from "./orders/orders.comp";
 
 const MainContentComp = ({ activeSetting }) => {
     const renderContent = () => {
@@ -9,19 +10,25 @@ const MainContentComp = ({ activeSetting }) => {
             case 'dashboard':
                 return (
                     <>
-                    <DashboardComp/>
+                        <DashboardComp />
                     </>
                 );
             case 'products':
                 return (
                     <>
-                    <ProductComp/>                    
+                        <ProductComp />
                     </>
                 );
             case 'customers':
                 return (
                     <>
-                        <CustomerComp/>
+                        <CustomerComp />
+                    </>
+                );
+            case 'orders':
+                return (
+                    <>
+                        <OrdersAdminComp/>
                     </>
                 );
             case 'settings':

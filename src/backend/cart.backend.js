@@ -62,7 +62,7 @@ export const useAddToCartBackend = () => {
     }
 
     // add to cart that uses db function
-    const addToCartDbFunction = async (inventoryId, qty) => {
+    const addToCartStoredProc = async (inventoryId, qty) => {
         setLoading(true);
         setError(null);
 
@@ -83,7 +83,7 @@ export const useAddToCartBackend = () => {
             }
 
             const { error } = await
-                supabase.rpc('add_to_cart', { invnt_id: inventoryId, customer_id: uId, qnty: qty })
+                supabase.rpc('add_to_cart_stored', { invnt_id: inventoryId, customer_id: uId, qnty: qty })
 
             if (error) {
                 throw new Error(error)
@@ -102,7 +102,7 @@ export const useAddToCartBackend = () => {
 
 
 
-    return { response, loading, error, addToCart };
+    return { response, loading, error, addToCart,addToCartStoredProc };
 }
 
 export const useCartRemoveBackend = () => {

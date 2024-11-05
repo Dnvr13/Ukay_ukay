@@ -4,15 +4,15 @@ import { useAddToCartBackend } from "../../../backend/cart.backend";
 
 const ItemCard = ({id, name, price, images}) => {
     const navigate = useState();
-    const { response, loading, error: errorAddCart, addToCart } = useAddToCartBackend();
+    const { response, loading, error: errorAddCart, addToCart,addToCartStoredProc} = useAddToCartBackend();
 
     const handleAddToCart = async () => {       
-        await addToCart(id, 1)
+        await addToCartStoredProc(id, 1)
         if (errorAddCart) {
             const x = errorAddCart;
             if (x.includes('login')) {
                 navigate('/login')
-            }
+            } 
             console.error(x);
         }
 

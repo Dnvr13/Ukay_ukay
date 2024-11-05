@@ -1,5 +1,6 @@
 import React from "react";
 import { useDashboardBackend, useLogOrdersBackend } from "../../../backend/logs.backend";
+import { dateFormatterAgo } from "../../utilities";
 
 const DashboardComp = () => {
     const { logOrders, loading: loadingLogs, error: errorLogs } = useLogOrdersBackend()
@@ -35,7 +36,7 @@ const DashboardComp = () => {
                     {logOrders.map((log) => {
                         return (
                             <li key={log.id}>
-                                <span className=" font-medium">{log.customers.username} » </span> {log.log} » <span className=" font-medium">Order</span> »<span className=" font-medium"> {log.order_detail_id}</span>
+                                <span className=" font-medium">{log.customers.username} » </span> {log.log} » <span className=" font-medium">Order</span> »<span className=" font-medium"> {log.order_detail_id}</span><span className="text-slate-400 text-sms"> | {dateFormatterAgo(log.created_at)}</span>
                             </li>
                         )
                     })}
