@@ -29,29 +29,24 @@ function App() {
     const checkAdminCookie = () => {
       const admin = Cookies.get('admin');
       const token = Cookies.get('token');
-      const currentLocation = window.location.pathname; // Corrected to get the current path
+      const currentLocation = window.location.pathname;
 
-      // Redirect if not an admin and not on the admin page
-      if (!admin && currentLocation === '/admin') {
-        window.location.href = '/login';
-      }else if(!admin && !token && currentLocation === '/profile'){
+      // Define the redirection logic
+      const shouldRedirectToLogin = () => {
+        return (
+          (!admin && currentLocation === '/admin') ||
+          (!admin && !token && currentLocation === '/profile')
+        );
+      };
+
+      // Redirect if necessary
+      if (shouldRedirectToLogin()) {
         window.location.href = '/login';
       }
     };
 
-    const startLoadingTimer = () => {
-      const timer = setTimeout(() => {
-        setLoading(false);
-      }, 2000); // Adjust timing if necessary
-
-      return timer;
-    };
-
-    checkAdminCookie();
-    const timer = startLoadingTimer();
-
-    return () => clearTimeout(timer);
-  }, []);
+    checkAdminCookie(); // Call the function to perform the check
+  }, []); // Empty dependency array to run once on mount
 
   return (
     <Router>
