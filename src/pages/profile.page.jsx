@@ -2,17 +2,22 @@ import React, { useState } from "react";
 import HeaderComp from "../components/zcomp/header.comp";
 import FooterComp from "../components/zcomp/footer.comp";
 import ProfileCustomerOrdersComp from "../components/zcomp/profile/orders.cust.comp";
+import ProfileAccountComp from "../components/zcomp/profile/account.cust.comp";
+import { useCustomerBackend } from "../backend/customer.backend";
+import { handleLogout } from "../components/utilities";
+
 
 const ProfilePage = () => {
     // State to keep track of the currently selected sidebar item
     const [activeItem, setActiveItem] = useState("account");
+
+    const { customer } = useCustomerBackend();
 
     // Function to handle sidebar item click
     const handleItemClick = (item) => {
         setActiveItem(item);
         // You can add navigation logic here if needed
     };
-
 
 
 
@@ -26,7 +31,6 @@ const ProfilePage = () => {
                     <ul className="space-y-2 mb-10">
                         <li>
                             <a
-                                href="#account"
                                 className={`flex items-center p-2 rounded ${activeItem === "account" ? "bg-blue-100 text-blue-600 font-semibold" : "text-gray-800 hover:bg-blue-50"}`}
                                 onClick={() => handleItemClick("account")}
                             >
@@ -38,7 +42,6 @@ const ProfilePage = () => {
                         </li>
                         <li>
                             <a
-                                href="#orders"
                                 className={`flex items-center p-2 rounded ${activeItem === "orders" ? "bg-blue-100 text-blue-600 font-semibold" : "text-gray-800 hover:bg-blue-50"}`}
                                 onClick={() => handleItemClick("orders")}
                             >
@@ -50,7 +53,6 @@ const ProfilePage = () => {
                         </li>
                         <li>
                             <a
-                                href="#notifications"
                                 className={`flex items-center p-2 rounded ${activeItem === "notifications" ? "bg-blue-100 text-blue-600 font-semibold" : "text-gray-800 hover:bg-blue-50"}`}
                                 onClick={() => handleItemClick("notifications")}
                             >
@@ -58,6 +60,18 @@ const ProfilePage = () => {
                                     <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" />
                                 </svg>
                                 Notifications
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                className={`flex items-center p-2 rounded ${activeItem === "logout" ? "bg-blue-100 text-blue-600 font-semibold" : "text-gray-800 hover:bg-blue-50"}`}
+                                onClick={() => handleLogout() }
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="mr-2" viewBox="0 0 16 16">
+                                    <path fillRule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0z" />
+                                    <path fillRule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708z" />
+                                </svg>
+                                Logout
                             </a>
                         </li>
                     </ul>
@@ -73,6 +87,7 @@ const ProfilePage = () => {
                     {activeItem === "notifications" && <p>Your notifications will be shown here.</p>} */}
 
                     {activeItem === "orders" ? <ProfileCustomerOrdersComp /> : ""}
+                    {activeItem === "account" ? <ProfileAccountComp customer={customer} /> : ""}
 
 
                 </div>

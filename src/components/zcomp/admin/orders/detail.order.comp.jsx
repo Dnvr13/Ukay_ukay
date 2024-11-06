@@ -2,8 +2,7 @@ import React from "react";
 import { dateFormatter } from "../../../utilities";
 
 const DetailOrdersAdminComp = ({ orderDetail, setOrderDetailOpen }) => {
-    const order = orderDetail;
-    console.log(order);
+    const order = orderDetail;   
     return (
         <div>
 

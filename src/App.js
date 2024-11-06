@@ -26,12 +26,12 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const checkAdminCookie = () => {
+    const checkUserStatus = () => {
       const admin = Cookies.get('admin');
       const token = Cookies.get('token');
       const currentLocation = window.location.pathname;
 
-      // Define the redirection logic
+      // Define redirection logic
       const shouldRedirectToLogin = () => {
         return (
           (!admin && currentLocation === '/admin') ||
@@ -39,14 +39,20 @@ function App() {
         );
       };
 
-      // Redirect if necessary
+      // Logic to handle redirects based on user status
       if (shouldRedirectToLogin()) {
         window.location.href = '/login';
+      } else if (admin && currentLocation !== '/admin') {
+        // If admin is true and not on admin page, redirect to admin page
+        window.location.href = '/admin';
+      } else if (token && currentLocation === '/admin') {
+        // If token is present, prevent redirect to admin
+        window.location.href = '/profile'; // Redirect to profile or another appropriate page
       }
     };
 
-    checkAdminCookie(); // Call the function to perform the check
-  }, []); // Empty dependency array to run once on mount
+    checkUserStatus(); // Call the function to perform the check
+  }, []);
 
   return (
     <Router>

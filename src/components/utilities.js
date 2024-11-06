@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
+export const handleLogout =()=>{
+    Cookies.remove('token')
+    Cookies.remove('admin')
+    window.location.reload();
+}
+
 export const useCheckUserLoggedUtil = () => {
     const [logged, setLogged] = useState(false);
 

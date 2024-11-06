@@ -1,4 +1,5 @@
 import React from "react";
+import { handleLogout } from "../../utilities";
 
 const SidebarComp = ({ isOpen, activeSetting, onSettingChange }) => {
     return (
@@ -11,7 +12,7 @@ const SidebarComp = ({ isOpen, activeSetting, onSettingChange }) => {
                 <a href="#" className={`block py-2 ${activeSetting === 'customers' ? 'font-bold' : ''}`} onClick={() => onSettingChange('customers')}>Customers</a>
                 <a href="#" className={`block py-2 ${activeSetting === 'orders' ? 'font-bold' : ''}`} onClick={() => onSettingChange('orders')}>Orders</a>
                 <a href="#" className={`block py-2 ${activeSetting === 'settings' ? 'font-bold' : ''}`} onClick={() => onSettingChange('settings')}>Settings</a>
-                <a href="#" className="block py-2">Logout</a>
+                <a href="#" className="block py-2" onClick={()=>handleLogout()}>Logout</a>
             </nav>
         </div>
     );

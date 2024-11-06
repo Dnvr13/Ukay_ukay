@@ -152,7 +152,7 @@ export const useUpdateCustomerInfoBackend = () => {
                 throw new Error("Provide your information!");
             }
 
-            console.log(userInfo);
+            // console.log(userInfo);
 
             const { data, error: errorUpdate } = await supabase
                 .from('customers')
