@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAddToCartBackend } from "../../../backend/cart.backend";
 import { useNavigate } from "react-router-dom";
 import { dateFormatterAgo } from "../../utilities";
+import { useAddToFavoritesBackend } from "../../../backend/favorites.backend";
 
 
 const FeaturedProductComp = ({ id, name, price, created_at, images }) => {
@@ -10,6 +11,7 @@ const FeaturedProductComp = ({ id, name, price, created_at, images }) => {
     const decrementQuantity = () => setQuantity((prev) => Math.max(0, prev - 1));
     const navigate = useNavigate();
     const { response, loading, error: errorAddCart, addToCart } = useAddToCartBackend();
+    const { loading: loadingFav, error: errorFav, addToFavorites } = useAddToFavoritesBackend()
 
     const handleAddToCart = async () => {
         if (quantity === 1) {
@@ -25,6 +27,18 @@ const FeaturedProductComp = ({ id, name, price, created_at, images }) => {
         }
 
     }
+
+    const handleAddToFav = async () => {
+        await addToFavorites(id)
+        if (errorFav) {
+            const x = errorFav
+            if (x.includes('login')) {
+                navigate('/login')
+            }
+            console.log(errorFav)
+        }
+    }
+
 
     return (
         <section className="mb-10">
@@ -50,6 +64,7 @@ const FeaturedProductComp = ({ id, name, price, created_at, images }) => {
                         <button
                             aria-label="Add to Favorites"
                             className="p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition"
+                            onClick={handleAddToFav}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 text-gray-700">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5A5.5 5.5 0 017.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3A5.5 5.5 0 0121 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />

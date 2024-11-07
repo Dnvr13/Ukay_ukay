@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
-export const handleLogout =()=>{
+export const handleLogout = () => {
     Cookies.remove('token')
     Cookies.remove('admin')
     window.location.reload();
@@ -70,4 +70,36 @@ export const dateFormatterAgo = (dateString) => {
         const years = Math.floor(days / 365);
         return `${years} year${years > 1 ? 's' : ''} ago`;
     }
+}
+
+
+export const useCheckCurrent = () => {
+    useEffect(() => {
+        const checkUserStatus = () => {
+            const admin = Cookies.get('admin');
+            const token = Cookies.get('token');
+            const currentLocation = window.location.pathname;
+
+            // Define redirection logic
+            const shouldRedirectToLogin = () => {
+                return (
+                    (!admin && currentLocation === '/admin') ||
+                    (!admin && !token && currentLocation === '/profile')
+                );
+            };
+
+            // Logic to handle redirects based on user status
+            if (shouldRedirectToLogin()) {
+                window.location.href = '/login';
+            } else if (admin && currentLocation !== '/admin') {
+                // If admin is true and not on admin page, redirect to admin page
+                window.location.href = '/admin';
+            } else if (token && currentLocation === '/admin') {
+                // If token is present, prevent redirect to admin
+                window.location.href = '/profile'; // Redirect to profile or another appropriate page
+            }
+        };
+
+        checkUserStatus(); // Call the function to perform the check
+    }, []);
 }

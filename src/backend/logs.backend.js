@@ -44,6 +44,7 @@ export const useLogOrdersBackend = () => {
 export const useDashboardBackend = () => {
     const [totalUser, setTotalUser] = useState(0);
     const [monthlyIncome, setMonthlyIncome] = useState(0);
+    const [totalProducts, setTotalProducts] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -55,7 +56,8 @@ export const useDashboardBackend = () => {
             try {
                 await Promise.all([
                     fetchDataFromApi('get_total_users', setTotalUser),
-                    fetchDataFromApi('get_monthly_income', setMonthlyIncome)
+                    fetchDataFromApi('get_monthly_income', setMonthlyIncome),
+                    fetchDataFromApi('get_total_products', setTotalProducts)
                 ]);
             } catch (err) {
                 // Handle any errors that occurred during fetching

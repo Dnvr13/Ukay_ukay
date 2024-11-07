@@ -4,7 +4,7 @@ import { dateFormatterAgo } from "../../utilities";
 
 const DashboardComp = () => {
     const { logOrders, loading: loadingLogs, error: errorLogs } = useLogOrdersBackend()
-    const {totalUser,monthlyIncome,loading:loadingDash,error:errorDash} = useDashboardBackend();
+    const {totalUser,monthlyIncome,totalProducts,loading:loadingDash,error:errorDash} = useDashboardBackend();
     return (
         <div>
             {/* Header */}
@@ -17,8 +17,8 @@ const DashboardComp = () => {
                     <p className="text-2xl font-bold text-blue-600">{totalUser}</p>
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow-md">
-                    <h2 className="text-xl font-semibold text-gray-700">Active Sessions</h2>
-                    <p className="text-2xl font-bold text-blue-600">{totalUser}</p>
+                    <h2 className="text-xl font-semibold text-gray-700">Total Products</h2>
+                    <p className="text-2xl font-bold text-blue-600">{totalProducts}</p>
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow-md">
                     <h2 className="text-xl font-semibold text-gray-700">Revenue</h2>

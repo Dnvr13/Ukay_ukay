@@ -1,58 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './components/LoginPage/LoginPage';
 import SignUpPage from './components/SignUpPage/SignUpPage';
 import ResetPasswordForm from './components/ResetPassword/ResetPasswordForm';
 import LoadingComponent from './components/LoadingComponent/LoadingComponent';
-import Home from './components/HomeComponents/Home';
-import Items from './components/ItemsComponents/Items';
 import './App.css';
 import NotFound from './pages/404.page';
-import Cart from './components/CartComponents/Cart';
 import HomePage from './pages/home.page';
-import ProductPage from './pages/product.page';
-import Favorites from './components/FavoritesComponents/Favorites';
-import Profile from './components/ProfileComponents/Profile';
 import { Toaster } from 'sonner';
 import ItemsPage from './pages/item.page';
 import FavoritesPage from './pages/favorites.page';
 import CartPage from './pages/cart.page';
 import ProfilePage from './pages/profile.page';
 import Admin from './pages/admin.page';
-import Cookies from 'js-cookie';
+import ProductDetailPage from './pages/product.page';
+import { useCheckCurrent } from './components/utilities';
 
 function App() {
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const checkUserStatus = () => {
-      const admin = Cookies.get('admin');
-      const token = Cookies.get('token');
-      const currentLocation = window.location.pathname;
-
-      // Define redirection logic
-      const shouldRedirectToLogin = () => {
-        return (
-          (!admin && currentLocation === '/admin') ||
-          (!admin && !token && currentLocation === '/profile')
-        );
-      };
-
-      // Logic to handle redirects based on user status
-      if (shouldRedirectToLogin()) {
-        window.location.href = '/login';
-      } else if (admin && currentLocation !== '/admin') {
-        // If admin is true and not on admin page, redirect to admin page
-        window.location.href = '/admin';
-      } else if (token && currentLocation === '/admin') {
-        // If token is present, prevent redirect to admin
-        window.location.href = '/profile'; // Redirect to profile or another appropriate page
-      }
-    };
-
-    checkUserStatus(); // Call the function to perform the check
-  }, []);
+  useCheckCurrent()
 
   return (
     <Router>
@@ -72,6 +40,7 @@ function App() {
           <Route path='/cart' element={<CartPage />} />
           <Route path='/favorites' element={<FavoritesPage />} />
           <Route path='/test' element={<Admin />} />
+          <Route path='/product' element={<ProductDetailPage />} />
           <Route path='*' element={<NotFound />} />
 
         </Routes>

@@ -1,176 +1,118 @@
 import React, { useEffect, useState } from 'react';
-import { useInsertProductBackend } from '../backend/inventory.backend';
-import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import HeaderComp from '../components/zcomp/header.comp';
+import FooterComp from '../components/zcomp/footer.comp';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAddToCartBackend } from '../backend/cart.backend';
+import { useAddToFavoritesBackend } from '../backend/favorites.backend';
 
-const ProductPage = () => {
-    const nav = useNavigate()   
-    const { response: responseBackend, loading: loadingBackend, error: errorBackend, insertProduct } = useInsertProductBackend()
+const ProductDetailPage = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    
+    const { id, name, description, price, images } = location.state || {};
+    const { loading: loadingCart, error: errorCart, addToCart } = useAddToCartBackend();
+    const { loading: loadingFav, error: errorFav, addToFavorites } = useAddToFavoritesBackend();
+    
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Redirect if no product data is found
     useEffect(() => {
-        const admin = Cookies.get('admin')    
-        if(admin){}else{
-            nav('/')
+        if (!location.state) {
+            navigate('/');
         }
-    }, [nav])
+    }, [location.state, navigate]);
 
-
-    const [images, setImages] = useState([]);
-    const [product, setProduct] = useState({
-        name: '',
-        quantity: '',
-        price: '',
-        description: '',
-    });
-
-    const handleProductInputs = (e) => {
-        setProduct({ ...product, [e.target.name]: e.target.value })
-    }
-
-    const handleImageChange = (event) => {
-        const files = Array.from(event.target.files);
-        const newImages = files.map((file) => ({
-            id: generateUID(file.name),
-            src: URL.createObjectURL(file),
-            name: file.name,
-            img_file: file
-        }));
-        setImages((prevImages) => [...prevImages, ...newImages]);
+    // Image navigation handlers
+    const handleNextImage = () => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
     };
 
-
-    const generateUID = (imageName) => {
-        const ext = imageName.split('.').pop();
-        return `img_${Date.now()}_${Math.floor(Math.random() * 1000)}.${ext}`;
+    const handlePrevImage = () => {
+        setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
     };
 
-    const removeImage = (id) => {
-        setImages(images.filter((image) => image.id !== id));
+    // Add to cart handler
+    const handleAddToCart = async () => {
+        await addToCart(id, 1);
+        if (errorCart?.includes('login')) {
+            navigate('/login');
+        }
     };
 
-    const handleInsert = async (e) => {
-        e.preventDefault();
-        await insertProduct(images, product)
-        setImages([]);
-        setProduct({
-            name: '',
-            quantity: '',
-            price: '',
-            description: '',
-        });
-    }
+    // Add to favorites handler
+    const handleAddToFavorites = async () => {
+        await addToFavorites(id);
+        if (errorFav?.includes('login')) {
+            navigate('/login');
+        }
+    };
 
-    const logout = () => {
-        Cookies.remove('admin')
-        window.location.reload();
-    }
+    // Render image carousel
+    const renderImageCarousel = () => (
+        <div className="relative w-full md:w-1/2">
+            <div className="w-full h-[500px] overflow-hidden rounded-lg shadow-lg">
+                <img
+                    src={images[currentImageIndex]?.url || "not set"}
+                    alt={name || "Product Image"}
+                    className="w-full h-full transition-transform duration-300 ease-in-out"
+                />
+            </div>
+            <div className="absolute top-1/2 left-0 right-0 flex justify-between transform -translate-y-1/2">
+                <button onClick={handlePrevImage} className="bg-white rounded-full p-2 shadow hover:bg-gray-200 transition">
+                    &#10094; {/* Left Arrow */}
+                </button>
+                <button onClick={handleNextImage} className="bg-white rounded-full p-2 shadow hover:bg-gray-200 transition">
+                    &#10095; {/* Right Arrow */}
+                </button>
+            </div>
+            <div className="flex justify-center mt-4">
+                {images.map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`h-2 w-2 mx-1 rounded-full ${currentImageIndex === index ? 'bg-blue-500' : 'bg-gray-300'}`}
+                    />
+                ))}
+            </div>
+        </div>
+    );
 
+    // Render product details
+    const renderProductDetails = () => (
+        <div className="md:ml-6 mt-4 md:mt-0 flex flex-col justify-center">
+            <h1 className="text-2xl font-bold">{name || "not set"}</h1>
+            <p className="text-xl text-green-600 mt-2">{price || "not set"}</p>
+            <h2 className="text-lg font-semibold mt-6">Description:</h2>
+            <p className="mt-4">{description}</p>
+            <div className="mt-6 flex space-x-4">
+                <button 
+                    className={`${loadingFav ? "bg-slate-400" : "bg-amber-500"} text-white py-2 px-4 rounded hover:bg-amber-600 transition`}
+                    onClick={handleAddToFavorites}
+                    disabled={loadingFav}
+                >
+                    Add to Favorites
+                </button>
+                <button 
+                    className={`${loadingCart ? "bg-slate-400" : "bg-blue-500"} text-white py-2 px-4 rounded hover:bg-blue-600 transition`}
+                    onClick={handleAddToCart}
+                    disabled={loadingCart}
+                >
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    );
 
     return (
-        <form onSubmit={handleInsert}>
-            <button type="button" className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded" onClick={logout}>Logout</button>
-            <div className='m-5 bg-orange-200 rounded-lg'>
-                <p className={`${!errorBackend ? 'bg-green-500' : 'bg-red-500'} font-medium m-3 text-3xl`}>{!errorBackend ? responseBackend : errorBackend}</p>
-                <h1 className='text-gray-700 font-medium px-2'>Product</h1>
-                <div className="space-y-4 p-4">
-                    <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                            Product Name:
-                        </label>
-                        <input
-                            id='name'
-                            type='text'
-                            name='name'
-                            placeholder='Product name'
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500 p-2"
-                            required
-                            onChange={handleProductInputs}
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">
-                            Product Quantity:
-                        </label>
-                        <input
-                            id='quantity'
-                            type='number'
-                            name='quantity'
-                            placeholder='Product quantity'
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500 p-2"
-                            required
-                            onChange={handleProductInputs}
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-                            Product Price:
-                        </label>
-                        <input
-                            id='price'
-                            type='number'
-                            name='price'
-                            placeholder='Product price'
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500 p-2"
-                            step="0.01"
-                            min="0"
-                            required
-                            onChange={handleProductInputs}
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                            Description:
-                        </label>
-                        <input
-                            id='description'
-                            type='text'
-                            name='description'
-                            placeholder='Product description'
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500 p-2"
-                            required
-                            onChange={handleProductInputs}
-                        />
-                    </div>
-
-                </div>
-            </div>
-            <div className="m-5 bg-rose-200 rounded-lg">
-                <div className='m-5'>
-                    <input
-                        type="file"
-                        onChange={handleImageChange}
-                        className="hidden"
-                        id="file-input"
-                        accept="image/png, image/jpeg"
-                        disabled={images.length === 1}
-                    />
-                    <label htmlFor="file-input" className="cursor-pointer bg-rose-300 p-2 rounded-md">
-                        Select Images
-                    </label>
-                </div>
-
-                <div className="image-preview">
-                    {images.map((image) => (
-                        <div key={image.id} className="relative inline-block m-2 bg-white rounded-md shadow-md p-3">
-                            <img src={image.src} alt="Preview" className="object-cover h-[100px] w-[100px]" />
-                            <button
-                                onClick={() => removeImage(image.id)}
-                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 m-1"
-                            >
-                                X
-                            </button>
-                            <p>{image.id}</p>
-                        </div>
-                    ))}
-                </div>
-
-                <button type='submit' className={`bg-amber-300 rounded p-3 m-5 ${loadingBackend ? 'hidden' : ''}`}>Insert product</button>
-            </div>
-        </form>
-
+        <div className="flex flex-col min-h-screen">
+            <HeaderComp />
+            <main className="flex-grow flex md:flex-row p-5 md:p-10">
+                {images && images.length > 0 ? renderImageCarousel() : <p>No images available</p>}
+                {renderProductDetails()}
+            </main>
+            <FooterComp />
+        </div>
     );
-}
+};
 
-export default ProductPage;
+export default ProductDetailPage;

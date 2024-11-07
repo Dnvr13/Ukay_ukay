@@ -35,6 +35,10 @@ const ProductGridComp = ({ products, loading }) => {
         }
     }
 
+    const navToProductDetail= (product)=>{
+        navigate('/product',{state:product})
+    }
+
     return (
 
         <section className="bg-white p-5 mt-4">
@@ -47,7 +51,11 @@ const ProductGridComp = ({ products, loading }) => {
                     <ul className="grid grid-cols-4 gap-10">
                         {loading && <ProductSkeleton count={8}/>}
                     {products.map((product, index) => (
-                        <li key={product.id} className="col-span-full sm:col-span-2 lg:col-span-1 group shadow-sm rounded border border-gray-50 hover:shadow-md relative">
+                        <li key={product.id} className="col-span-full sm:col-span-2 lg:col-span-1 group shadow-sm rounded border border-gray-50 hover:shadow-md relative cursor-pointer"
+                        onClick={()=>{
+                            navToProductDetail(product);
+                        }}
+                        >
                             <a className="p-2 flex flex-col">
                                 {/* ::Picture */}
                                 <div className="aspect-w-1 aspect-h-1 w-full h-full overflow-hidden filter group-hover:brightness-110">
