@@ -9,7 +9,7 @@ const ProductDetailPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     
-    const { id, name, description, price, images } = location.state || {};
+    const { id, name, description, price, quantity,images } = location.state || {};
     const { loading: loadingCart, error: errorCart, addToCart } = useAddToCartBackend();
     const { loading: loadingFav, error: errorFav, addToFavorites } = useAddToFavoritesBackend();
     
@@ -81,9 +81,10 @@ const ProductDetailPage = () => {
     const renderProductDetails = () => (
         <div className="md:ml-6 mt-4 md:mt-0 flex flex-col justify-center">
             <h1 className="text-2xl font-bold">{name || "not set"}</h1>
-            <p className="text-xl text-green-600 mt-2">{price || "not set"}</p>
+            <p className="text-xl text-green-600 mt-2">₱{price || "0"}</p>
+            <p className="text-xl text-stone-800 mt-2">Qty Left: {quantity || "0"} </p>
             <h2 className="text-lg font-semibold mt-6">Description:</h2>
-            <p className="mt-4">{description}</p>
+            <p className="mt-4">{description || "not set"}</p>
             <div className="mt-6 flex space-x-4">
                 <button 
                     className={`${loadingFav ? "bg-slate-400" : "bg-amber-500"} text-white py-2 px-4 rounded hover:bg-amber-600 transition`}

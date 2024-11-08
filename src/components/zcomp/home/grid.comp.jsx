@@ -67,12 +67,12 @@ const ProductGridComp = ({ products, loading }) => {
                                     {/* :::title */}
                                     <h3 className="text-base text-gray-500 font-medium">{product.name}</h3>
                                     {/* :::price */}
-                                    <p className="text-lg text-gray-700 font-semibold">{product.price}₱</p>
+                                    <p className="text-lg text-gray-700 font-semibold">₱{product.price}</p>
                                 </div>
                             </a>
 
                             {/* ::Action Icons */}
-                            <div className="absolute top-2 right-2 flex space-x-2">
+                            {/* <div className="absolute top-2 right-2 flex space-x-2">
                                 <button
                                     aria-label="Add to Favorites"
                                     className="p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition"
@@ -90,7 +90,7 @@ const ProductGridComp = ({ products, loading }) => {
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h18l-1.5 9H5.25L4.5 6H3zM16.5 21a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm-9 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
                                     </svg>
                                 </button>
-                            </div>
+                            </div> */}
                         </li>
 
                     ))

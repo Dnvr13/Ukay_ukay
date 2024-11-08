@@ -57,7 +57,7 @@ const ViewProductsComp = ({ setAddProduct, setEditProduct, products, setSelected
                                                 {product.quantity}
                                             </td>
                                             <td className="px-6 py-4">
-                                                ${product.price}
+                                                ₱{product.price}
                                             </td>
                                             <td className="px-6 py-4">
                                                 {product.description}

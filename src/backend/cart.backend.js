@@ -102,7 +102,7 @@ export const useAddToCartBackend = () => {
 
 
 
-    return { response, loading, error, addToCart,addToCartStoredProc };
+    return { response, loading, error, addToCart, addToCartStoredProc };
 }
 
 export const useCartRemoveBackend = () => {
@@ -149,58 +149,60 @@ export const useCartBackend = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchCartItems = async () => {
-            setLoading(true);
-            setError(null);
+    const fetchCartItems = async () => {
+        setLoading(true);
+        setError(null);
 
-            try {
-                const token = Cookies.get("token");
-                if (!token) {
-                    throw new Error("Please login to continue!");
-                }
-
-                const customerId = token.split('-')[0];
-
-                const { data, error } = await supabase
-                    .from('cart')
-                    .select(`
-                        *,
-                        inventory (
-                            *,
-                            inventory_images (url)
-                        )
-                    `)
-                    .eq('customer_id', customerId); // Use customerId from token
-
-                if (error) {
-                    throw new Error(error.message);
-                }
-
-                const formattedData = data.map(item => ({
-                    ...item,
-                    cat_id: item.id,
-                    name: item.inventory.name,
-                    price: item.inventory.price,
-                    image: item.inventory.inventory_images[0]?.url,
-                    product_quantity: item.inventory.quantity,  // added product_quantity to check the qnty of the product when checking out
-                    quantity: item.quantity,
-                    total_price: item.inventory.price * item.quantity
-                }));
-                console.log(formattedData);
-                setCartItems(formattedData);
-            } catch (error) {
-                setError(error.message);
-                console.error(error);
-            } finally {
-                setLoading(false);
+        try {
+            const token = Cookies.get("token");
+            if (!token) {
+                throw new Error("Please login to continue!");
             }
-        };
 
+            const customerId = token.split('-')[0];
+
+            const { data, error } = await supabase
+                .from('cart')
+                .select(`
+                    *,
+                    inventory (
+                        *,
+                        inventory_images (url)
+                    )
+                `)
+                .eq('customer_id', customerId); // Use customerId from token
+
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            const formattedData = data.map(item => ({
+                ...item,
+                cat_id: item.id,
+                name: item.inventory.name,
+                price: item.inventory.price,
+                image: item.inventory.inventory_images[0]?.url,
+                product_quantity: item.inventory.quantity,  // added product_quantity to check the quantity of the product when checking out
+                quantity: item.quantity,
+                total_price: item.inventory.price * item.quantity
+            }));
+            console.log(formattedData);
+            setCartItems(formattedData);
+        } catch (error) {
+            setError(error.message);
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Fetch cart items on initial render
+    useEffect(() => {
         fetchCartItems();
     }, []);
 
-    return { cartItems, loading, error };
+    // Return cart items, loading state, error state, and refresh function
+    return { cartItems, loading, error, refreshCart: fetchCartItems };
 };
 
 
@@ -215,7 +217,7 @@ export const useSelectedCustomerCartBackend = (customerId) => {
             setError(null);
 
             try {
-                
+
                 const { data, error } = await supabase
                     .from('cart')
                     .select(`
@@ -326,7 +328,7 @@ export const useCartCheckoutBackend = () => {
                     throw new Error(error);
                 }
             }
-            
+
 
             // empty the customer cart
             const { error: errorCart } = await supabase
@@ -351,4 +353,39 @@ export const useCartCheckoutBackend = () => {
         }
     }
     return { response, loading, error, checkout }
+}
+
+
+export const useUpdateCustCart = () => {
+    const [response, setResponse] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+
+    const updateCustCart = async (itemId, qty) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+           
+            const { error } = await supabase
+                .from('cart')
+                .update({ quantity: qty })
+                .eq('id', itemId);
+
+            if (error) {
+                throw new Error(error)
+            }
+            toast.success("Quantity changed applied");
+            setResponse("Quantity changed applied");
+
+        } catch (err) {
+            toast.error(err.message)
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return {response,loading,updateCustCart}
 }

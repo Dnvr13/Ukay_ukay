@@ -25,8 +25,8 @@ const ProfilePage = () => {
     const components = () => {
         if (loading) {
             return (
-                <div class="flex-grow bg-white p-5 ml-4 rounded-md flex items-center justify-center h-full">
-                    <svg class="h-8 w-8 animate-spin text-gray-600" viewBox="0 0 100 100">
+                <div className="flex-grow bg-white p-5 ml-4 rounded-md flex items-center justify-center h-full">
+                    <svg className="h-8 w-8 animate-spin text-gray-600" viewBox="0 0 100 100">
                         <circle fill="none" strokeWidth="10" className="stroke-current opacity-40" cx="50" cy="50" r="40" />
                         <circle fill="none" strokeWidth="10" className="stroke-current" strokeDasharray="250" strokeDashoffset="210" cx="50" cy="50" r="40" />
                     </svg>
