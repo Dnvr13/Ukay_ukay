@@ -88,6 +88,7 @@ const ViewOrdersAdminComp = ({ orders, setOrderDetailOpen, setOrderDetail, handl
                                             <button className="mx-1 bg-transparent text-teal-500 border border-teal-500 hover:bg-teal-500 hover:text-white font-semibold text-sm py-1 px-2 rounded" name="delete"
                                                 onClick={(e) => {                                                 
                                                     handleUpdateStatus(e);
+                                                    handleRefresh();
                                                     
                                                 }} data-id={order.id} disabled={loadingUpdateStatus}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="mx-1" viewBox="0 0 16 16">

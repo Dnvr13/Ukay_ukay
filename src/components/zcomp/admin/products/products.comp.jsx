@@ -20,7 +20,7 @@ const ProductComp = () => {
             <h1 className="text-2xl font-medium text-slate-500">Products</h1>
             <div className="mt-20">
                 {!addProduct && !editProduct ? <ViewProductsComp setAddProduct={setAddProduct} setEditProduct={setEditProduct} products={products} setSelectedProduct={setSelectedProduct} /> : ""}
-                {addProduct && !editProduct ? <AddProductComp setAddProduct={setAddProduct}/> : ""}
+                {addProduct && !editProduct ? <AddProductComp setAddProduct={setAddProduct} handleRefresh={handleRefresh}/> : ""}
                 {editProduct && !addProduct? <EditProductComp setEditProduct={setEditProduct} productt={selectedProduct} setSelectedProduct={setSelectedProduct} handleRefresh={handleRefresh} /> : ""}
             </div>
         </div>

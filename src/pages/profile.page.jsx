@@ -22,6 +22,35 @@ const ProfilePage = () => {
     };
 
 
+    const components = () => {
+        if (loading) {
+            return (
+                <div class="flex-grow bg-white p-5 ml-4 rounded-md flex items-center justify-center h-full">
+                    <svg class="h-8 w-8 animate-spin text-gray-600" viewBox="0 0 100 100">
+                        <circle fill="none" strokeWidth="10" className="stroke-current opacity-40" cx="50" cy="50" r="40" />
+                        <circle fill="none" strokeWidth="10" className="stroke-current" strokeDasharray="250" strokeDashoffset="210" cx="50" cy="50" r="40" />
+                    </svg>
+                </div>
+            )
+        } else {
+            switch (activeItem) {
+                case 'account':
+                    return (
+                        <ProfileAccountComp customer={customer} />
+                    )
+                case 'orders':
+                    return (
+                        <ProfileCustomerOrdersComp />
+                    )
+                case 'notifications':
+                    return (
+                        <p>Your notifications will be shown here.</p>
+                    )
+            }
+        }
+    }
+
+
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-300">
@@ -89,16 +118,8 @@ const ProfilePage = () => {
                     {activeItem === "notifications" && <p>Your notifications will be shown here.</p>} */}
 
                     {
-                    !loading && activeItem === "account" ? <ProfileAccountComp customer={customer} />
-                        : <div class="flex-grow bg-white p-5 ml-4 rounded-md flex items-center justify-center h-full">
-                            <svg class="h-8 w-8 animate-spin text-gray-600" viewBox="0 0 100 100">
-                                <circle fill="none" strokeWidth="10" className="stroke-current opacity-40" cx="50" cy="50" r="40" />
-                                <circle fill="none" strokeWidth="10" className="stroke-current" strokeDasharray="250" strokeDashoffset="210" cx="50" cy="50" r="40" />
-                            </svg>
-                        </div>
+                        components()
                     }
-                    {activeItem === "orders" ? <ProfileCustomerOrdersComp /> : ""}
-
 
                 </div>
             </main>
@@ -106,6 +127,8 @@ const ProfilePage = () => {
             <FooterComp />
         </div>
     );
+
+
 }
 
 export default ProfilePage;

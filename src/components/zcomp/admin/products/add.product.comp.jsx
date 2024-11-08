@@ -151,9 +151,10 @@ const AddProductComp = ({ setAddProduct,handleRefresh}) => {
                             type="file"
                             onChange={handleImageChange}
                             className="hidden"
+                            multiple
                             id="file-input"
                             accept="image/png, image/jpeg"
-                            disabled={images.length === 1}
+
                         />
                         <label htmlFor="file-input" className="cursor-pointer bg-green-300 p-2 rounded-md">
                             Select Image

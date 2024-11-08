@@ -85,5 +85,5 @@ export const useDashboardBackend = () => {
         }
     };
 
-    return { totalUser, monthlyIncome, loading, error };
+    return { totalUser, monthlyIncome, totalProducts,loading, error };
 };
