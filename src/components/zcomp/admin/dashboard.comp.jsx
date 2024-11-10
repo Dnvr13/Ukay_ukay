@@ -22,7 +22,7 @@ const DashboardComp = () => {
                 </div>
                 <div className="bg-white p-4 rounded-lg shadow-md">
                     <h2 className="text-xl font-semibold text-gray-700">Revenue</h2>
-                    <p className="text-2xl font-bold text-blue-600">${monthlyIncome||"0"}</p>
+                    <p className="text-2xl font-bold text-blue-600">₱{monthlyIncome||"0"}</p>
                 </div>
             </div>
 

@@ -3,6 +3,17 @@ import { dateFormatter } from "../../utilities";
 
 const ProfileCustomerOrderTableComp = ({ orders, setOrderDetailOpen,setOrderDetail}) => {
 
+    const orderStatusColor = (status)=>{
+        switch(status){
+            case 'complete':
+            return <span className=" text-green-600">{status}</span>
+            case 'pending':
+            return <span className=" text-blue-600">{status}</span>
+            case 'cancel':
+            return <span className=" text-rose-600">{status}</span>
+        }
+    }
+
     return (
         <div>
             <h1 className="text-xl font-bold">Orders</h1>
@@ -45,7 +56,7 @@ const ProfileCustomerOrderTableComp = ({ orders, setOrderDetailOpen,setOrderDeta
                                         ${order.total_price}
                                     </td>
                                     <td className="px-6 py-4">
-                                        {order.status}
+                                        {orderStatusColor(order.status)}
                                     </td>
                                     <td className="px-6 py-4">
                                         {dateFormatter(order.date_order)}

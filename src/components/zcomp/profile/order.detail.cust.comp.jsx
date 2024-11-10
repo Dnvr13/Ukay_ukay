@@ -1,7 +1,49 @@
 import React from "react";
 import { dateFormatter } from "../../utilities";
+import { useOrderDetailsStatusBackend } from "../../../backend/orders.backend";
+import { toast } from "sonner";
 
 const ProfileCustomerOrderDetailComp = ({ order, setOrderDetailOpen }) => {
+    const {loading,updateCancelStatus} = useOrderDetailsStatusBackend();
+
+    let toastDisplayed = false;
+
+    const handleCancelAction = async (isProceed) => {
+        if (isProceed) {
+            await updateCancelStatus(order.id)
+        }
+        toastDisplayed = false;
+    };
+
+
+    const handleCancelOrder = () => {       
+        if (!toastDisplayed) {
+            toastDisplayed = true; // Set the flag to true to indicate a toast is displayed
+
+            toast.warning("Cancel this order ?", {
+                classNames: {
+                    toast: "flex-col items-start",
+                    actionButton: "w-full justify-center !bg-rose-500 group-[.toast]:!text-white",
+                    cancelButton: "w-full justify-center !bg-sky-500 group-[.toast]:!text-white",
+                },
+                description: "Are you sure you want to cancel the order? This cannot be undone.",
+                action: {
+                    label: "Cancel",
+                    onClick: () => handleCancelAction(false),
+                },
+                cancel: {
+                    label: "Yes",
+                    onClick: () => handleCancelAction(true),
+                },
+                duration: Infinity,
+                onDismiss: () => {
+                    toastDisplayed = false; // Reset the flag when the toast is dismissed
+                }
+            });
+
+        }
+
+    };
 
     return (
         <div>
@@ -34,11 +76,11 @@ const ProfileCustomerOrderDetailComp = ({ order, setOrderDetailOpen }) => {
                         ))}
                     </ul>
 
-                    {/* <button
-                        onClick={() => setOrderDetailOpen(false)}
-                        className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-                        Close
-                    </button> */}
+                    <button
+                        onClick={() => handleCancelOrder()}
+                        className={`mt-4 ${loading?"bg-gray-300":"bg-blue-500 hover:bg-blue-600"} text-white py-2 w-3/12 px-4 rounded  ${order.status!=='pending'?"hidden":""}`}>
+                        Cancel Order
+                    </button>
                 </div>
             </div>
         </div >

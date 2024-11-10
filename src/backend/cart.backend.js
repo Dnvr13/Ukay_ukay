@@ -323,7 +323,7 @@ export const useCartCheckoutBackend = () => {
 
             // updating the product quantity 
             for (const item of cart) {
-                const { error } = await supabase.rpc('update_p_quantity', { invnt_id: item.inventory_id, pqnty: item.quantity });
+                const { error } = await supabase.rpc('update_p_quantity', { invnt_id: item.inventory_id, operation: 'subtract',pqnty: item.quantity, });
                 if (error) {
                     throw new Error(error);
                 }
@@ -352,7 +352,36 @@ export const useCartCheckoutBackend = () => {
             setLoading(false);
         }
     }
-    return { response, loading, error, checkout }
+
+    const checkoutFunctionDB = async () => {
+        try {
+            const token = Cookies.get("token")
+            if (!token) {
+                throw new Error("Please login to continue!")
+            }
+
+            const uId = token.split('-')[0]
+
+            const { error } = await supabase.rpc('checkout', {cust_id:uId});
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            toast.success("Successfully checkout!") // toast for now, suggest to have a success checkout page
+            setResponse("Successfully checkout!")
+            window.location.reload();
+
+        } catch (error) {
+            toast.error(error.message)
+            setError(error.message);
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+
+
+    }
+    return { response, loading, error, checkout,checkoutFunctionDB }
 }
 
 
@@ -367,7 +396,7 @@ export const useUpdateCustCart = () => {
         setError(null);
 
         try {
-           
+
             const { error } = await supabase
                 .from('cart')
                 .update({ quantity: qty })
@@ -387,5 +416,5 @@ export const useUpdateCustCart = () => {
         }
     }
 
-    return {response,loading,updateCustCart}
+    return { response, loading, updateCustCart }
 }

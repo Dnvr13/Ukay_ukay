@@ -9,7 +9,7 @@ const CartPage = () => {
     const navigate = useNavigate();
 
     const { cartItems, loading, error, refreshCart } = useCartBackend();
-    const { loading: loadingCheckout, error: errorCheckout, checkout } = useCartCheckoutBackend();
+    const { loading: loadingCheckout, error: errorCheckout, checkout,checkoutFunctionDB } = useCartCheckoutBackend();
     const { loading: loadingRemoveItem, error: errorRemoveItem, cartRemove } = useCartRemoveBackend();
     const { updateCustCart } = useUpdateCustCart();
 
@@ -17,7 +17,8 @@ const CartPage = () => {
     let totalPrice = 0;
 
     const handleCartCheckout = async () => {
-        await checkout(cartItems);
+        // await checkout(cartItems);
+        await checkoutFunctionDB();
         console.log(loadingCheckout);
         console.log(errorCheckout);
     };
@@ -113,7 +114,7 @@ const CartPage = () => {
                             </div>
                         ) : (
                             cartItems.map(item => (
-                                <div className="flex justify-between border-b py-2 relative">
+                                <div key={item.id} className="flex justify-between border-b py-2 relative">
                                     <img
                                         src={item.image}
                                         alt={item.name}

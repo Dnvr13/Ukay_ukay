@@ -50,7 +50,7 @@ const ViewCustomerOrdersComp = ({ selectedCustomer, setOrdersCustomer }) => {
                                         {order.id}
                                     </th>
                                     <td className="px-6 py-4">
-                                        ${order.total_price}
+                                        ₱{order.total_price}
                                     </td>
                                     <td className="px-6 py-4">
                                         {order.status}

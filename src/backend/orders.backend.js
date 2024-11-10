@@ -136,5 +136,29 @@ export const useOrderDetailsStatusBackend = () => {
         }
     }
 
-    return { response, loading, error, updateCompleteStatus }
+    const updateCancelStatus = async (order_details_id) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            if (!order_details_id) {
+                throw new Error("Please specify the order to cancel!")
+            }
+            const { error } = await supabase.rpc('order_cancel', { order_details_id:order_details_id });
+
+            if (error) {
+                throw new Error(error.message)
+            }
+            toast.success("Order has been cancelled!");
+            setResponse("Order has been cancelled!");
+
+        } catch (err) {
+            toast.error(err.message)
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return { response, loading, error, updateCompleteStatus,updateCancelStatus}
 }

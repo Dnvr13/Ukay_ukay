@@ -2,7 +2,18 @@ import React, { useState } from "react";
 import { dateFormatter } from "../../../utilities";
 
 
-const ViewOrdersAdminComp = ({ orders, setOrderDetailOpen, setOrderDetail, handleRefresh, handleUpdateStatus ,loadingUpdateStatus}) => {
+const ViewOrdersAdminComp = ({ orders, setOrderDetailOpen, setOrderDetail, handleRefresh, handleUpdateStatus, loadingUpdateStatus }) => {
+
+    const orderStatusColor = (status) => {
+        switch (status) {
+            case 'complete':
+                return <span className=" text-green-600">{status}</span>
+            case 'pending':
+                return <span className=" text-blue-600">{status}</span>
+            case 'cancel':
+                return <span className=" text-rose-600">{status}</span>
+        }
+    }
 
     return (
         <div>
@@ -66,10 +77,10 @@ const ViewOrdersAdminComp = ({ orders, setOrderDetailOpen, setOrderDetail, handl
                                             {order.id}
                                         </td>
                                         <td className="px-6 py-4">
-                                            ${order.total_price}
+                                            ₱{order.total_price}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {order.status}
+                                            {orderStatusColor(order.status)}
                                         </td>
                                         <td className="px-6 py-4">
                                             {dateFormatter(order.date_order)}
@@ -86,10 +97,10 @@ const ViewOrdersAdminComp = ({ orders, setOrderDetailOpen, setOrderDetail, handl
                                                 </svg>
                                             </button>
                                             <button className="mx-1 bg-transparent text-teal-500 border border-teal-500 hover:bg-teal-500 hover:text-white font-semibold text-sm py-1 px-2 rounded" name="delete"
-                                                onClick={(e) => {                                                 
+                                                onClick={(e) => {
                                                     handleUpdateStatus(e);
                                                     handleRefresh();
-                                                    
+
                                                 }} data-id={order.id} disabled={loadingUpdateStatus}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="mx-1" viewBox="0 0 16 16">
                                                     <path fillRule="evenodd" d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0" />
