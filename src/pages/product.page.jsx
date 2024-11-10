@@ -8,11 +8,11 @@ import { useAddToFavoritesBackend } from '../backend/favorites.backend';
 const ProductDetailPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    
-    const { id, name, description, price, quantity,images } = location.state || {};
+
+    const { id, name, description, price, quantity, images } = location.state || {};
     const { loading: loadingCart, error: errorCart, addToCart } = useAddToCartBackend();
     const { loading: loadingFav, error: errorFav, addToFavorites } = useAddToFavoritesBackend();
-    
+
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     // Redirect if no product data is found
@@ -86,14 +86,14 @@ const ProductDetailPage = () => {
             <h2 className="text-lg font-semibold mt-6">Description:</h2>
             <p className="mt-4">{description || "not set"}</p>
             <div className="mt-6 flex space-x-4">
-                <button 
+                <button
                     className={`${loadingFav ? "bg-slate-400" : "bg-amber-500"} text-white py-2 px-4 rounded hover:bg-amber-600 transition`}
                     onClick={handleAddToFavorites}
                     disabled={loadingFav}
                 >
                     Add to Favorites
                 </button>
-                <button 
+                <button
                     className={`${loadingCart ? "bg-slate-400" : "bg-blue-500"} text-white py-2 px-4 rounded hover:bg-blue-600 transition`}
                     onClick={handleAddToCart}
                     disabled={loadingCart}
@@ -108,7 +108,8 @@ const ProductDetailPage = () => {
         <div className="flex flex-col min-h-screen">
             <HeaderComp />
             <main className="flex-grow flex md:flex-row p-5 md:p-10">
-                {images && images.length > 0 ? renderImageCarousel() : <p>No images available</p>}
+                {images && images.length > 0 ? renderImageCarousel() : <div className="w-1/2 h-[500px] rounded-lg shadow-lg items-center"><p>No images available</p>
+                </div>}
                 {renderProductDetails()}
             </main>
             <FooterComp />

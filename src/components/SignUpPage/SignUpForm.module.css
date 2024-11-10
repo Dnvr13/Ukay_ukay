@@ -109,7 +109,7 @@
 
 .togglePasswordVisibility {
   position: absolute;
-  right: 25px;
+  right: 50px;
   top: 60%;
   transform: translateY(-50%);
   background: transparent;

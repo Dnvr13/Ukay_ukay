@@ -5,7 +5,7 @@ import { useUpdateCustomerInfoBackend } from "../../../backend/customer.backend"
 const ProfileImage = ({ profileImage, onClick }) => (
     <div className="flex items-center mb-4">
         <img
-            src={profileImage || 'https://via.placeholder.com/150'}
+            src={profileImage || 'https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg'}
             alt="Profile"
             className="w-24 h-24 rounded-full border-2 border-gray-300 mr-4 cursor-pointer"
             onClick={onClick}

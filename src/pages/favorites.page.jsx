@@ -3,9 +3,11 @@ import HeaderComp from "../components/zcomp/header.comp";
 import FooterComp from "../components/zcomp/footer.comp";
 import { useFavoritesBackend, useRemoveFavItemBackend } from "../backend/favorites.backend";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 
 const FavoritesPage = () => {
+    const navigate = useNavigate()
     const { favItems, loading: fetchLoading, error: fetchError } = useFavoritesBackend()
     const { response, loading: removeLoading, error: removeError, removeFavItem } = useRemoveFavItemBackend()  
 
@@ -48,6 +50,14 @@ const FavoritesPage = () => {
 
     };
 
+    const navToProductDetail = (product) => {     
+        if (product.inventory_images) {
+            product.images = product.inventory_images;
+            delete product.inventory_images
+        }
+        navigate('/product', { state: product })
+    }
+
 
 
     return (
@@ -76,7 +86,7 @@ const FavoritesPage = () => {
                     
                     {favItems.map((item, index) => (
                         <li key={index} className="flex items-center bg-white rounded-lg p-3 mb-2 shadow-md hover:shadow-lg relative w-2/4">
-                            <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-md" />
+                            <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-md" onClick={()=>navToProductDetail(item.inventory)}/>
                             <div className="ml-4 flex-grow">
                                 <h3 className="text-lg font-semibold">{item.name}</h3>
                                 <p className="text-gray-700">{item.price}</p>
