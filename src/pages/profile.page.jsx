@@ -44,7 +44,19 @@ const ProfilePage = () => {
                     )
                 case 'notifications':
                     return (
-                        <p>Your notifications will be shown here.</p>
+                        <>
+                            <div className="flex flex-col items-center justify-center h-3/4 bg-gray-100">
+                                <svg
+                                    className="w-16 h-16 text-gray-500 mb-4"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20">
+                                    <path d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                                    <path d="M10 5a1 1 0 00-.707.293L6.586 8H7a1 1 0 100-2h-.586l2.121-2.121A1 1 0 0010 5z" />
+                                </svg>
+                                <h2 className="text-xl font-semibold text-gray-700">Your Notification is Empty</h2>
+                                <p className="text-gray-500"></p>
+                            </div >
+                        </>
                     )
             }
         }

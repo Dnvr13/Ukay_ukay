@@ -3,14 +3,16 @@ import { dateFormatter } from "../../utilities";
 import { useOrderDetailsStatusBackend } from "../../../backend/orders.backend";
 import { toast } from "sonner";
 
-const ProfileCustomerOrderDetailComp = ({ order, setOrderDetailOpen }) => {
+const ProfileCustomerOrderDetailComp = ({ order, setOrderDetailOpen,handleRefresh}) => {
     const {loading,updateCancelStatus} = useOrderDetailsStatusBackend();
 
     let toastDisplayed = false;
 
     const handleCancelAction = async (isProceed) => {
         if (isProceed) {
-            await updateCancelStatus(order.id)
+            await updateCancelStatus(order.id);
+            setOrderDetailOpen(false);
+            handleRefresh();
         }
         toastDisplayed = false;
     };

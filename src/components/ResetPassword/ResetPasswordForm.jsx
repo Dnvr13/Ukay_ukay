@@ -1,12 +1,26 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import styles from "./ResetPasswordForm.module.css";
+import { toast } from "sonner";
+import { useForgotPasswordCustomerBackend } from "../../backend/customer.backend";
 
 function ResetPasswordForm() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showRetypePassword, setShowRetypePassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate(); // Hook to handle navigation
+  const {response,forgotPassword} = useForgotPasswordCustomerBackend()
+
+  const [customer,setCustomer] = useState({
+    emailOrUsername:"",
+    password:"",
+    confirm_password:""
+  })
+
+  const handleCustomer = (e)=>{
+    const { name, value } = e.target;
+    setCustomer({ ...customer, [name]: value });
+  }
 
   // Event handler for navigating to the login page
   const handleLoginClick = () => {
@@ -24,21 +38,21 @@ function ResetPasswordForm() {
   };
 
   // Handle form submission
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    
-    // Here you would normally handle form submission to the backend
-    // For now, we simulate a successful password reset
-    setSuccessMessage("Your password has been successfully reset!");
+  const handleSubmit = async(e) => {
+    e.preventDefault();
 
-    // Optionally, redirect to another page after a delay
-    setTimeout(() => {
-      navigate('/login'); // Redirect to the login page after a successful reset
-    }, 2000);
+    if(customer.password !== customer.confirm_password){
+      toast.error("Password is not matched!")
+    }else{
+      await forgotPassword(customer)
+      
+    }
+        
   };
 
   return (
     <section className={styles.resetPasswordSection}>
+      {response?navigate("/login"):""}
       <form className={styles.resetPasswordForm} onSubmit={handleSubmit}>
         <h2 className={styles.formTitle}>Reset Your Password</h2>
         <p className={styles.formDescription}>
@@ -52,6 +66,8 @@ function ResetPasswordForm() {
           type="text"
           className={styles.formInput}
           placeholder="Email/Username"
+          name="emailOrUsername"
+          onChange={handleCustomer}
           required
         />
         <div className={styles.passwordFieldContainer}>
@@ -62,6 +78,8 @@ function ResetPasswordForm() {
             type={showNewPassword ? "text" : "password"}
             className={styles.formInput}
             placeholder="New Password"
+            name="password"
+            onChange={handleCustomer}
             required
           />
           <button
@@ -79,7 +97,9 @@ function ResetPasswordForm() {
             id="retypePassword"
             type={showRetypePassword ? "text" : "password"}
             className={styles.formInput}
-            placeholder="Retype Password"
+            placeholder="Confirm Password"
+            name="confirm_password"
+            onChange={handleCustomer}
             required
           />
           <button
@@ -112,9 +132,7 @@ function ResetPasswordForm() {
           Know your password?{" "}
           <button
             type="button"
-            className={styles.loginLink}
-            onClick={handleLoginClick}
-          >
+            className={styles.loginLink}>
             Log In
           </button>
         </p>

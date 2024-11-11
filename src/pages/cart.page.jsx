@@ -208,10 +208,11 @@ const CartPage = () => {
                         {/* Checkout Button */}
                         <button
                             type="button"
-                            className={`w-full ${cartItems.length === 0 ? 'bg-gray-300' : 'bg-blue-500 hover:bg-blue-600'} text-white py-2 rounded-md  mt-4`}
+                            className={`w-full ${cartItems.length === 0 || loadingCheckout ? 'bg-gray-300' : 'bg-blue-500 hover:bg-blue-600'} text-white py-2 rounded-md  mt-4`}
                             onClick={handleCartCheckout}                
+                            disabled={cartItems.length === 0 || loadingCheckout}
                         >
-                            Checkout Now
+                            Checkout now
                         </button>
                     </div>
                 </div>

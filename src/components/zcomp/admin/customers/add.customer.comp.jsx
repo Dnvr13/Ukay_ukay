@@ -5,7 +5,7 @@ import { useInsertCustomerBackend } from "../../../../backend/customer.backend";
 
 const AddCustomerComp = ({ setAddCustomer, handleRefresh }) => {
     const [formData, setFormData] = useState({
-        username:"",
+        username: "",
         name: "",
         email: "",
         contact_no: "",
@@ -36,8 +36,10 @@ const AddCustomerComp = ({ setAddCustomer, handleRefresh }) => {
         const validationErrors = validateForm();
         if (Object.keys(validationErrors).length === 0) {
             await insertCustomer(formData)
-            setFormData({ username:"",name: "", email: "", contact_no: "", address: "" }); // Reset form
-            setErrors({});
+            setAddCustomer(false)
+            handleRefresh();
+            // setFormData({ username:"",name: "", email: "", contact_no: "", address: "" }); // Reset form
+            // setErrors({});
         } else {
             setErrors(validationErrors);
         }
@@ -50,7 +52,7 @@ const AddCustomerComp = ({ setAddCustomer, handleRefresh }) => {
 
     return (
         <div className="">
-            {response ? handleReset() : ""}
+            {/* {response ? handleReset() : ""} */}
             <button className="mt-10 bg-transparent text-gray-500 border border-gray-500 hover:bg-gray-500 hover:text-white font-semibold text-sm py-1 px-2 rounded flex items-center" onClick={() => setAddCustomer(false)}>
                 <span className="mr-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">
@@ -66,8 +68,7 @@ const AddCustomerComp = ({ setAddCustomer, handleRefresh }) => {
                     <input
                         type="text"
                         id="username"
-                        name="username"
-                        value={formData.username}
+                        name="username"                        
                         onChange={handleChange}
                         className={`border rounded-lg w-full p-2 ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
                     />
@@ -79,8 +80,7 @@ const AddCustomerComp = ({ setAddCustomer, handleRefresh }) => {
                     <input
                         type="text"
                         id="name"
-                        name="name"
-                        value={formData.name}
+                        name="name"                        
                         onChange={handleChange}
                         className={`border rounded-lg w-full p-2 ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
                     />
@@ -92,8 +92,7 @@ const AddCustomerComp = ({ setAddCustomer, handleRefresh }) => {
                     <input
                         type="email"
                         id="email"
-                        name="email"
-                        value={formData.email}
+                        name="email"                  
                         onChange={handleChange}
                         className={`border rounded-lg w-full p-2 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                     />
@@ -105,8 +104,7 @@ const AddCustomerComp = ({ setAddCustomer, handleRefresh }) => {
                     <input
                         type="tel"
                         id="contact_no"
-                        name="contact_no"
-                        value={formData.contact_no}
+                        name="contact_no"                       
                         onChange={handleChange}
                         className={`border rounded-lg w-full p-2 ${errors.contact_no ? 'border-red-500' : 'border-gray-300'}`}
                     />
@@ -117,8 +115,7 @@ const AddCustomerComp = ({ setAddCustomer, handleRefresh }) => {
                     <label className="block text-gray-600 mb-1" htmlFor="address">Address</label>
                     <textarea
                         id="address"
-                        name="address"
-                        value={formData.address}
+                        name="address"                       
                         onChange={handleChange}
                         rows={3}
                         className={`border rounded-lg w-full p-2 ${errors.address ? 'border-red-500' : 'border-gray-300'}`}

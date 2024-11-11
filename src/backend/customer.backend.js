@@ -176,3 +176,79 @@ export const useUpdateCustomerInfoBackend = () => {
 
     return { response, loading, error, updateInfo };
 };
+
+
+
+export const useForgotPasswordCustomerBackend = () => {
+    const [response, setResponse] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const forgotPassword = async (customer) => {
+        setLoading(true);
+        resetState();
+
+        try {
+            validateCustomer(customer);
+            const userData = await findUser(customer);
+            await updatePassword(userData.id, customer.password);
+            handleSuccess();
+        } catch (err) {
+            handleError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const resetState = () => {
+        setError(null);
+        setResponse(null);
+    };
+
+    const validateCustomer = (customer) => {
+        if (!customer || !customer.emailOrUsername || !customer.password) {
+            throw new Error("Please provide all required data!");
+        }
+    };
+
+    const findUser = async (customer) => {
+        const { data, error } = await supabase
+            .from("customers")
+            .select("id, username")
+            .or(`username.eq.${customer.emailOrUsername},email.eq.${customer.emailOrUsername}`);
+
+        if (error) {
+            throw new Error(`Error occurred while fetching user: ${error.message}`);
+        }
+
+        if (data.length === 0) {
+            throw new Error("Cannot find the user.");
+        }
+
+        return data[0]; // Return the first user found
+    };
+
+    const updatePassword = async (userId, newPassword) => {
+        const { error } = await supabase
+            .from('customers')
+            .update({ password: newPassword })
+            .eq("id", userId);
+
+        if (error) {
+            throw new Error(`Error updating password: ${error.message}`);
+        }
+    };
+
+    const handleSuccess = () => {
+        toast.success("Password has been changed successfully!");
+        setResponse("Password has been changed successfully!");
+    };
+
+    const handleError = (err) => {
+        toast.error(err.message);
+        setError(err.message);
+        console.error(err.message);
+    };
+
+    return { response, loading, error, forgotPassword };
+};

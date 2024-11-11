@@ -52,6 +52,8 @@ const AddProductComp = ({ setAddProduct,handleRefresh}) => {
     const handleInsert = async (e) => {
         e.preventDefault();
         await insertProduct(images, product)
+        setAddProduct(false);       
+        handleRefresh()
     }
 
     const logout = () => {
@@ -67,7 +69,7 @@ const AddProductComp = ({ setAddProduct,handleRefresh}) => {
     
     return (
         <div>
-            {responseBackend?resetComponent():""}
+            {/* {responseBackend?resetComponent():""} */}
             <button className="bg-transparent text-gray-500 border border-gray-500 hover:bg-gray-500 hover:text-white font-semibold text-sm py-1 px-2 rounded flex items-center" onClick={() => setAddProduct(false)}>
                 <span className="mr-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">

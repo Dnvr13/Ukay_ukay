@@ -8,48 +8,53 @@ export const useCustomerOrdersBackend = (customer_id) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const customerOrders = async () => {
-            setLoading(true);
-            setError(null);
-
-            if (!customer_id) {
-                throw new Error("Specified the user")
-            }
-
-            try {
-                const { data, error } = await supabase
-                    .from('order_details')
-                    .select(`
-                *,
-                orders (
-                    *,
-                    inventory (
-                        *,
-                        inventory_images (url)
-                    )
-                )
-            `)
-                    .eq('customer_id', customer_id)
-                    .order('date_order', { ascending: false });
-
-                if (error) {
-                    throw new Error(error.message);
-                }
-
-                setOrders(data);
-            } catch (err) {
-                toast.error(err.message);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
+    useEffect(() => {        
         customerOrders();
     }, []);
 
-    return { orders, loading, error };
+    const customerOrders = async () => {
+        setLoading(true);
+        setError(null);
+
+        if (!customer_id) {
+            throw new Error("Specified the user")
+        }
+
+        try {
+            const { data, error } = await supabase
+                .from('order_details')
+                .select(`
+            *,
+            orders (
+                *,
+                inventory (
+                    *,
+                    inventory_images (url)
+                )
+            )
+        `)
+                .eq('customer_id', customer_id)
+                .order('date_order', { ascending: false });
+
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            setOrders(data);
+        } catch (err) {
+            toast.error(err.message);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const refreshOrders = ()=>{
+        customerOrders();
+    }
+
+
+    return { orders, loading, error,refreshOrders };
 
 }
 
