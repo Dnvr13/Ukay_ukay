@@ -9,7 +9,7 @@ import ViewCustomerOrdersComp from "./view.orders.cust.comp";
 
 
 const CustomerComp = () => {
-    const { customers, loading, error, refreshCustomers } = useCustomersBackend()
+    const { customers, loading, error, refreshCustomers, deleteCustomer } = useCustomersBackend()
     const [cart, setCart] = useState(false);
     const [addCustomer, setAddCustomer] = useState(false);
     const [editCustomer, setEditCustomer] = useState(false);
@@ -24,7 +24,7 @@ const CustomerComp = () => {
         <div>
             <h1 className="text-2xl font-medium text-slate-500">Customer</h1>
             <div className="mt-20">
-                {!cart && !addCustomer && !editCustomer && !ordersCustomer ? <ViewCustomersComp customers={customers} setCart={setCart} setSelectedCustomer={setSelectedCustomer} setEditCustomer={setEditCustomer} setAddCustomer={setAddCustomer} setOrdersCustomer={setOrdersCustomer} /> : ""}
+                {!cart && !addCustomer && !editCustomer && !ordersCustomer ? <ViewCustomersComp customers={customers} setCart={setCart} setSelectedCustomer={setSelectedCustomer} setEditCustomer={setEditCustomer} setAddCustomer={setAddCustomer} setOrdersCustomer={setOrdersCustomer} handleRefresh={handleRefresh} deleteCustomer={deleteCustomer} loading={loading} /> : ""}
                 {cart && !addCustomer && !editCustomer && !ordersCustomer ? <CartCustomerComp selectedCustomer={selectedCustomer} setCart={setCart} /> : ""}
                 {!cart && !addCustomer && editCustomer && !ordersCustomer ? <EditCustomerComp selectedCustomer={selectedCustomer} setEditCustomer={setEditCustomer} setSelectedCustomer={setSelectedCustomer} handleRefresh={handleRefresh} /> : ""}
                 {!cart && addCustomer && !editCustomer && !ordersCustomer ? <AddCustomerComp setAddCustomer={setAddCustomer} handleRefresh={handleRefresh} /> : ""}

@@ -52,7 +52,7 @@ export const useAddToCartBackend = () => {
             }
             toast.success("Item added to cart!");
             setResponse("Item added to cart!");
-
+            return response;
         } catch (err) {
             toast.error(err.message)
             setError(err.message);
@@ -353,7 +353,7 @@ export const useCartCheckoutBackend = () => {
         }
     }
 
-    const checkoutFunctionDB = async () => {
+    const checkoutFunctionDB = async (pmode) => {
         try {
             const token = Cookies.get("token")
             if (!token) {
@@ -362,7 +362,7 @@ export const useCartCheckoutBackend = () => {
 
             const uId = token.split('-')[0]
 
-            const { error } = await supabase.rpc('checkout', {cust_id:uId});
+            const { error } = await supabase.rpc('checkout', {cust_id:uId,pmode});
             if (error) {
                 throw new Error(error.message);
             }

@@ -19,7 +19,7 @@ const HeaderComp = () => {
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/c6d0a7a6f1e9238ee939c4890c892dfaf179c0c3228dd98cc1712dad2439eb75?placeholderIfAbsent=true&apiKey=63cef383af9641cc969e43f7e6acc6c2"
         alt="Ukay-Ukay Online Shop Logo"
         className="aspect-ratio[1.02] object-contain w-[172px] rounded-full max-w-full mb-4 md:mb-0"
-      />
+      onClick={()=>handleNavigation("/")}/>
 
       {/* Navigation */}
       <nav className="flex items-center gap-10 text-black text-xl md:gap-8 mb-4 md:mb-0">

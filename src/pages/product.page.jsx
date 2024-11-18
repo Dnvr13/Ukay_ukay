@@ -9,7 +9,7 @@ const ProductDetailPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { id, name, description, price, quantity, images } = location.state || {};
+    const { id, name, description, price, quantity, images, inventory_category } = location.state || {};
     const { loading: loadingCart, error: errorCart, addToCart } = useAddToCartBackend();
     const { loading: loadingFav, error: errorFav, addToFavorites } = useAddToFavoritesBackend();
 
@@ -85,6 +85,27 @@ const ProductDetailPage = () => {
             <p className="text-xl text-stone-800 mt-2">Qty Left: {quantity || "0"} </p>
             <h2 className="text-lg font-semibold mt-6">Description:</h2>
             <p className="mt-4">{description || "not set"}</p>
+            <h2 className="text-lg font-semibold mt-6">Category:</h2>
+
+            <div className="flex flex-wrap">
+                {
+                    inventory_category.length === 0 ?
+                        <div className="flex items-center bg-stone-300 text-black rounded-full px-2 py-1 min-w-min mr-1 mt-1">
+                            <span className="text-sm font-medium overflow-hidden whitespace-nowrap overflow-ellipsis">
+                                No category
+                            </span>
+                        </div>
+                        : inventory_category.map((item, index) => {
+                            return (
+                                <div key={index} className="flex items-center bg-stone-500 text-white rounded-full px-3 py-1 min-w-min mr-1 mt-1">
+                                    <span className="text-sm font-medium">{item.category.name}</span>
+                                </div>
+                            )
+                        })
+                }
+            </div>
+           
+
             <div className="mt-6 flex space-x-4">
                 <button
                     className={`${loadingFav ? "bg-slate-400" : "bg-amber-500"} text-white py-2 px-4 rounded hover:bg-amber-600 transition`}

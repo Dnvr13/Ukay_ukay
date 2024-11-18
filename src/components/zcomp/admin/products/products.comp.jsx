@@ -8,7 +8,7 @@ import EditProductComp from "./edit.product.comp";
 const ProductComp = () => {
     const [addProduct, setAddProduct] = useState(false)
     const [editProduct, setEditProduct] = useState(false)
-    const { products, loading: loadingProducts,refreshProducts} = useProductsBackend()
+    const { products, loading: loadingProducts,refreshProducts} = useProductsBackend(true)
     const [selectedProduct, setSelectedProduct] = useState(null)
 
     const handleRefresh = async()=>{
@@ -19,7 +19,7 @@ const ProductComp = () => {
         <div>
             <h1 className="text-2xl font-medium text-slate-500">Products</h1>
             <div className="mt-20">
-                {!addProduct && !editProduct ? <ViewProductsComp setAddProduct={setAddProduct} setEditProduct={setEditProduct} products={products} setSelectedProduct={setSelectedProduct} /> : ""}
+                {!addProduct && !editProduct ? <ViewProductsComp setAddProduct={setAddProduct} setEditProduct={setEditProduct} products={products} setSelectedProduct={setSelectedProduct} handleRefresh={handleRefresh}/> : ""}
                 {addProduct && !editProduct ? <AddProductComp setAddProduct={setAddProduct} handleRefresh={handleRefresh}/> : ""}
                 {editProduct && !addProduct? <EditProductComp setEditProduct={setEditProduct} productt={selectedProduct} setSelectedProduct={setSelectedProduct} handleRefresh={handleRefresh} /> : ""}
             </div>

@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { useUpdateCustomerInfoBackend } from "../../../../backend/customer.backend";
 
-const EditCustomerComp = ({ selectedCustomer, setSelectedCustomer, setEditCustomer,handleRefresh }) => {
+const EditCustomerComp = ({ selectedCustomer, setSelectedCustomer, setEditCustomer, handleRefresh }) => {
     const [formData, setFormData] = useState({
-        id:selectedCustomer? selectedCustomer.id:0,
+        id: selectedCustomer ? selectedCustomer.id : 0,
         name: selectedCustomer ? selectedCustomer.name : "",
         email: selectedCustomer ? selectedCustomer.email : "",
         contact_no: selectedCustomer ? selectedCustomer.contact_no : "",
         address: selectedCustomer ? selectedCustomer.address : ""
     });
 
-    const {response,loading,error,updateInfo} = useUpdateCustomerInfoBackend();
+    const { response, loading, error, updateInfo } = useUpdateCustomerInfoBackend();
 
     const [errors, setErrors] = useState({});
 
@@ -28,19 +28,23 @@ const EditCustomerComp = ({ selectedCustomer, setSelectedCustomer, setEditCustom
         return newErrors;
     };
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validateForm();
         if (Object.keys(validationErrors).length === 0) {
             await updateInfo(formData)
-            setFormData({ name: "", email: "", contact_no: "", address: "" }); // Reset form
-            setErrors({});
+            setSelectedCustomer(null)
+            setEditCustomer(false)
+            handleRefresh();
+            // setFormData({ name: "", email: "", contact_no: "", address: "" }); // Reset form
+            // setErrors({});
+           
         } else {
             setErrors(validationErrors);
         }
     };
 
-    const handleReset =()=>{
+    const handleReset = () => {
         setSelectedCustomer(null)
         setEditCustomer(false)
         handleRefresh();
@@ -48,7 +52,7 @@ const EditCustomerComp = ({ selectedCustomer, setSelectedCustomer, setEditCustom
 
     return (
         <div className="">
-            {response?handleReset():""}
+            {/* {response?handleReset():""} */}
             <button className="mt-10 bg-transparent text-gray-500 border border-gray-500 hover:bg-gray-500 hover:text-white font-semibold text-sm py-1 px-2 rounded flex items-center" onClick={() => setEditCustomer(false)}>
                 <span className="mr-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">

@@ -112,7 +112,8 @@ export const useCustomersBackend = () => {
             const { data, error } = await supabase
                 .from('customers')
                 .select('*')
-                .eq('role', 0);
+                .eq('role', 0)
+                .eq('is_deleted', 0);
 
             if (error) {
                 throw new Error(error.message);
@@ -135,7 +136,30 @@ export const useCustomersBackend = () => {
         fetchCustomers();
     };
 
-    return { customers, loading, error, refreshCustomers };
+    const deleteCustomer = async (uid) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const { error } = await supabase
+                .from('customers')
+                .update({ is_deleted: 1 })        
+                .eq('id', uid);
+
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            toast.success("Customer deleted successfully!")
+            return "Customer deleted successfully!";
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { customers, loading, error, refreshCustomers,deleteCustomer };
 };
 
 

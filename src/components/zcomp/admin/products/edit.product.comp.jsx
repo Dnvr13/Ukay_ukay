@@ -2,28 +2,20 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
 import { useUpdateProductBackend } from "../../../../backend/inventory.backend";
-import { toast } from "sonner";
 
 
-const EditProductComp = ({ setEditProduct, productt,setSelectedProduct,handleRefresh}) => {
+const EditProductComp = ({ setEditProduct, productt, setSelectedProduct, handleRefresh }) => {
     const nav = useNavigate()
     const { response: responseBackend, loading: loadingBackend, error: errorBackend, updateProduct } = useUpdateProductBackend()
-    // useEffect(() => {
-    //     const admin = Cookies.get('admin')    
-    //     if(admin){}else{
-    //         nav('/')
-    //     }
-    // }, [nav])
-
 
     const [images, setImages] = useState([]);
     const [product, setProduct] = useState({
-        name: productt?productt.name:"",
-        quantity: productt?productt.quantity:"",
-        price: productt?productt.price:"",
-        description: productt?productt.description:"",
+        name: productt ? productt.name : "",
+        quantity: productt ? productt.quantity : "",
+        price: productt ? productt.price : "",
+        description: productt ? productt.description : "",
     });
-   
+
     const handleProductInputs = (e) => {
         setProduct({ ...product, [e.target.name]: e.target.value })
     }
@@ -51,23 +43,15 @@ const EditProductComp = ({ setEditProduct, productt,setSelectedProduct,handleRef
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-        await updateProduct(productt.id,product)
-    }
-
-    const logout = () => {
-        Cookies.remove('admin')
-        window.location.reload();
-    }
-
-    const resetComponent =()=>{
+        await updateProduct(productt.id, product)
         setEditProduct(false);
         setSelectedProduct({});
         handleRefresh();
     }
 
+
     return (
-        <div>
-            {responseBackend?resetComponent():""}
+        <div>           
             <button className="bg-transparent text-gray-500 border border-gray-500 hover:bg-gray-500 hover:text-white font-semibold text-sm py-1 px-2 rounded flex items-center" onClick={() => setEditProduct(null)}>
                 <span className="mr-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">
@@ -152,7 +136,7 @@ const EditProductComp = ({ setEditProduct, productt,setSelectedProduct,handleRef
                 <button type='submit' className={`text-white bg-sky-500 rounded p-2 m-2 text-base ${loadingBackend ? 'hidden' : ''}`}>
                     Update product
                 </button>
-            </form>
+            </form>    
         </div>
     )
 }

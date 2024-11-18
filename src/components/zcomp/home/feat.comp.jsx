@@ -14,7 +14,7 @@ const FeaturedProductComp = ({ id, name, price, created_at, images }) => {
     const { loading: loadingFav, error: errorFav, addToFavorites } = useAddToFavoritesBackend()
 
     const handleAddToCart = async () => {
-        if (quantity === 1) {
+        if (quantity === 0) {
             return;
         }
         await addToCart(id, quantity)
@@ -23,10 +23,10 @@ const FeaturedProductComp = ({ id, name, price, created_at, images }) => {
             if (x.includes('login')) {
                 navigate('/login')
             }
-            console.error(x);
+            console.log(x);
         }
-
     }
+
 
     const handleAddToFav = async () => {
         await addToFavorites(id)
@@ -36,6 +36,13 @@ const FeaturedProductComp = ({ id, name, price, created_at, images }) => {
                 navigate('/login')
             }
             console.log(errorFav)
+        }
+    }
+
+    const handleBuy = async () => {
+        const res = await addToCart(id, quantity)
+        if(res !== undefined){
+            navigate('/cart')
         }
     }
 
@@ -57,7 +64,9 @@ const FeaturedProductComp = ({ id, name, price, created_at, images }) => {
                     </div>
                     <div className="flex items-center justify-center w-12 h-10 bg-white rounded-md text-3xl">{quantity}</div>
                     <div className="flex items-center gap-3 mt-4">
-                        <button className="bg-transparent border-2 border-red-600 rounded-full py-2 px-6 text-xl font-bold text-red-600 hover:bg-red-600 hover:text-white">
+                        <button className="bg-transparent border-2 border-red-600 rounded-full py-2 px-6 text-xl font-bold text-red-600 hover:bg-red-600 hover:text-white"
+                            onClick={handleBuy}
+                        >
                             Buy
                         </button>
                         {/* Action Icons */}

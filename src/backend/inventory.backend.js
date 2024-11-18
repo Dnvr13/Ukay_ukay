@@ -53,7 +53,7 @@ export const useInsertProductBackend = () => {
             }
             toast.success("Product added successfully!");
             setResponse("Product added successfully!");
-        
+
         }
         catch (err) {
             toast.error(err.message);
@@ -140,79 +140,167 @@ export const useRemoveProductBackend = () => {
 }
 
 
-
-
-
-// Select all the products
-// usage
-// const { products, loading, error,refreshProducts } = useProducts();
-export const useProductsBackend = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+export const useProductCategoryBackend = () => {
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Function to fetch products
-    const fetchProducts = async () => {
+    // Helper function to handle API calls
+    const handleApiCall = async (apiCall) => {
         setLoading(true);
-        try {
-            const productsData = await fetchProductsData();
-            const productsWithImages = await fetchProductsWithImages(productsData);
+        setError(null);
 
-            // Filter out products with quantity of 0
-            const filteredProducts = productsWithImages.filter(product => product.quantity > 0);
-            // console.log(filteredProducts);
-            setProducts(filteredProducts);
+        try {
+            const { error } = await apiCall();
+
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            return true;
+
         } catch (err) {
+            console.error(err.message);
+            toast.error(err.message);
             setError(err.message);
+            return false;
         } finally {
             setLoading(false);
         }
     };
 
-    // Fetch products on mount
+    const addCategory = (cat_id, pid) => {
+        return handleApiCall(() => supabase.from("inventory_category").insert({ category_id: cat_id, inventory_id: pid }));
+    };
+
+    const addCategoryCustom = (cname, pid) => {
+        return handleApiCall(() => supabase.rpc('add_cat_to_product', { cname, pid }));
+    };
+
+    const removeCategory = (cat_prod_id) => {
+        return handleApiCall(() => supabase.rpc('remove_cat_to_product', { cat_prod_id }));
+    };
+
+    const categoryList = async () => {
+        const success = await handleApiCall(() => supabase.from("category").select("*"));
+        if (success) {
+            const { data } = await supabase.from("category").select("*");
+            setCategories(data);
+        }
+    };
+
+    const refreshCatList = () => {
+        categoryList();
+    };
+
     useEffect(() => {
-        fetchProducts();
-    }, []); // Runs once on mount
+        categoryList();
+    }, []);
 
-    // Function to fetch product data from Supabase
-    const fetchProductsData = async () => {
-        const { data: productsData, error: fetchError } = await supabase
-            .from('inventory')
-            .select('*');
-
-        if (fetchError) {
-            throw new Error(fetchError.message);
-        }
-
-        return productsData;
+    return {
+        categories,
+        loading,
+        error,
+        addCategory,
+        addCategoryCustom,
+        removeCategory,
+        refreshCatList,
     };
+};
 
-    // Function to fetch images for each product
-    const fetchProductsWithImages = async (productsData) => {
-        return Promise.all(productsData.map(async (product) => {
-            const images = await fetchProductImages(product.id);
-            return { ...product, images };
-        }));
-    };
 
-    // Function to fetch images for a specific product
-    const fetchProductImages = async (inventoryId) => {
-        const { data: productImages, error: imagesError } = await supabase
-            .from('inventory_images')
-            .select('url')
-            .eq('inventory_id', inventoryId);
+// Select all the products
+// usage
+// const { products, loading, error,refreshProducts } = useProductsBackend();
+export const useProductsBackend = (isAdmin) => {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-        if (imagesError) {
-            throw new Error(imagesError.message);
-        }
+    useEffect(() => {
+        fetchProducts(isAdmin);
+    }, []);
 
-        return productImages || [];
-    };
-
-    // Refresh function to re-fetch products
     const refreshProducts = () => {
         fetchProducts();
     };
+
+
+    const fetchProducts = async (isAdmin) => {
+        setLoading(true);
+        setError(null)
+        try {
+            const { data, error } = await supabase
+                .from('inventory')
+                .select(`
+              *,
+              inventory_images(url),
+              inventory_category (
+                *,category(*)
+              )
+            `);
+
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            if (Array.isArray(data)) {
+                data.forEach(item => {
+                    if (item.inventory_images) {
+                        item.images = item.inventory_images;
+                        delete item.inventory_images;
+                    }
+                });
+            }
+
+            const dat = data.filter(product => isAdmin ? product.is_deleted === 0 : product.quantity > 0 && product.is_deleted === 0);
+            setProducts(dat);
+
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const getProduct = async (pid) => {
+        setLoading(true);
+        setError(null)
+        try {
+            const { data, error } = await supabase
+                .from('inventory')
+                .select(`
+              *,
+              inventory_images(url),
+              inventory_category (
+                *,category(*)
+              )
+            `)
+                .eq("id", pid);
+
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            if (Array.isArray(data)) {
+                data.forEach(item => {
+                    if (item.inventory_images) {
+                        item.images = item.inventory_images;
+                        delete item.inventory_images;
+                    }
+                });
+            }
+
+            const dat = data.filter(product => product.quantity > 0);
+            setProducts(dat);
+
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
 
     return { products, loading, error, refreshProducts };
 };

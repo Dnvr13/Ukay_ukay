@@ -1,8 +1,46 @@
 import React from "react";
 import { dateFormatter } from "../../../utilities";
+import { toast } from "sonner";
 
 
-const ViewCustomersComp = ({ customers, setCart, setSelectedCustomer, setEditCustomer, setAddCustomer,setOrdersCustomer}) => {
+const ViewCustomersComp = ({ customers, setCart, setSelectedCustomer, setEditCustomer, setAddCustomer, setOrdersCustomer, handleRefresh, deleteCustomer, loading }) => {
+    let toastDisplayed = false;
+    const handleRemoveAction = async (isProceed, cust_id) => {
+        if (isProceed) {
+            await deleteCustomer(cust_id);
+            handleRefresh();
+        }
+        toastDisplayed = false;
+    };
+
+
+    const handleDeleteCustomer = (cust_id) => {
+        if (!toastDisplayed) {
+            toastDisplayed = true;
+
+            toast.warning("Deleting customer", {
+                classNames: {
+                    toast: "flex-col items-start",
+                    actionButton: "w-full justify-center !bg-rose-500 group-[.toast]:!text-white",
+                    cancelButton: "w-full justify-center !bg-sky-500 group-[.toast]:!text-white",
+                },
+                description: "Are you sure you want to remove the Customer? This cannot be undone.",
+                action: {
+                    label: "Cancel",
+                    onClick: () => handleRemoveAction(false, cust_id),
+                },
+                cancel: {
+                    label: "Yes",
+                    onClick: () => handleRemoveAction(true, cust_id),
+                },
+                duration: Infinity,
+                onDismiss: () => {
+                    toastDisplayed = false; // Reset the flag when the toast is dismissed
+                }
+            });
+        }
+    };
+
     return (
         <div>
             <button className="my-5 bg-transparent text-blue-500 border border-blue-500 hover:bg-blue-500 hover:text-white font-semibold text-sm py-1 px-2 rounded flex items-center" onClick={() => setAddCustomer(true)}>
@@ -113,7 +151,7 @@ const ViewCustomersComp = ({ customers, setCart, setSelectedCustomer, setEditCus
                                                         <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l1.25 5h8.22l1.25-5zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0" />
                                                     </svg>
                                                 </button>
-                                                <button className="mx-1 bg-transparent text-fuchsia-500 border border-fuchsia-500 hover:bg-fuchsia-500 hover:text-white font-semibold text-sm py-1 px-2 rounded" onClick={()=>{
+                                                <button className="mx-1 bg-transparent text-fuchsia-500 border border-fuchsia-500 hover:bg-fuchsia-500 hover:text-white font-semibold text-sm py-1 px-2 rounded" onClick={() => {
                                                     setOrdersCustomer(true);
                                                     setSelectedCustomer(cust);
                                                 }}>
@@ -122,11 +160,11 @@ const ViewCustomersComp = ({ customers, setCart, setSelectedCustomer, setEditCus
                                                         <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8m0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5" />
                                                     </svg>
                                                 </button>
-                                                {/* <button className="mx-1 bg-transparent text-red-500 border border-red-500 hover:bg-red-500 hover:text-white font-semibold text-sm py-1 px-2 rounded" name="delete">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="mx-1" viewBox="0 0 16 16">
-                                                <path d="M14 3a.7.7 0 0 1-.037.225l-1.684 10.104A2 2 0 0 1 10.305 15H5.694a2 2 0 0 1-1.973-1.671L2.037 3.225A.7.7 0 0 1 2 3c0-1.105 2.686-2 6-2s6 .895 6 2M3.215 4.207l1.493 8.957a1 1 0 0 0 .986.836h4.612a1 1 0 0 0 .986-.836l1.493-8.957C11.69 4.689 9.954 5 8 5s-3.69-.311-4.785-.793" />
-                                            </svg>
-                                        </button> */}
+                                                <button className="mx-1 bg-transparent text-red-500 border border-red-500 hover:bg-red-500 hover:text-white font-semibold text-sm py-1 px-2 rounded" name="delete" onClick={() => handleDeleteCustomer(cust.id)} disabled={loading}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="mx-1" viewBox="0 0 16 16">
+                                                        <path d="M14 3a.7.7 0 0 1-.037.225l-1.684 10.104A2 2 0 0 1 10.305 15H5.694a2 2 0 0 1-1.973-1.671L2.037 3.225A.7.7 0 0 1 2 3c0-1.105 2.686-2 6-2s6 .895 6 2M3.215 4.207l1.493 8.957a1 1 0 0 0 .986.836h4.612a1 1 0 0 0 .986-.836l1.493-8.957C11.69 4.689 9.954 5 8 5s-3.69-.311-4.785-.793" />
+                                                    </svg>
+                                                </button>
                                             </td>
                                         </tr>
                                     )

@@ -24,6 +24,7 @@ const DetailOrdersAdminComp = ({ orderDetail, setOrderDetailOpen }) => {
                     <p><strong>Total:</strong> ${order.total_price}</p>
                     <p><strong>Status:</strong> {order.status}</p>
                     <p><strong>Date:</strong> {dateFormatter(order.date_order)}</p>
+                    <p><strong>Payment Method:</strong> {order.payment_mode || "not set"}</p>
                     {/* Add more details as needed */}
 
                     <h3 className="mt-4 font-semibold">Items:</h3>

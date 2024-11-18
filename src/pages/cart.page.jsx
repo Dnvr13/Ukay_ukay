@@ -9,26 +9,37 @@ const CartPage = () => {
     const navigate = useNavigate();
 
     const { cartItems, loading, error, refreshCart } = useCartBackend();
-    const { loading: loadingCheckout, error: errorCheckout, checkout,checkoutFunctionDB } = useCartCheckoutBackend();
+    const { loading: loadingCheckout, error: errorCheckout, checkout, checkoutFunctionDB } = useCartCheckoutBackend();
     const { loading: loadingRemoveItem, error: errorRemoveItem, cartRemove } = useCartRemoveBackend();
     const { updateCustCart } = useUpdateCustCart();
+    const [paymentMode,setPaymentMode] = useState({
+        mode:''
+    });
 
     let toastDisplayed = false;
     let totalPrice = 0;
 
     const handleCartCheckout = async () => {
-        // await checkout(cartItems);
-        await checkoutFunctionDB();
-        console.log(loadingCheckout);
-        console.log(errorCheckout);
+        if(paymentMode.mode !== ''){
+            await checkoutFunctionDB(paymentMode.mode);
+        }else{
+            toast.error("Selet payment method!");
+        }
     };
+    
+    const handlePaymode =(e)=>{
+        const { name, value } = e.target;
+        setPaymentMode({ ...paymentMode, [name]: value })
+    }
 
+    
     const handleRemoveAction = async (isProceed, itemId) => {
         if (isProceed) {
             await cartRemove(itemId);
         }
         toastDisplayed = false;
     };
+
 
     const handleRemoveCartItem = (e) => {
         const itemId = e.currentTarget.dataset.id;
@@ -193,13 +204,26 @@ const CartPage = () => {
                     <div className="bg-white rounded-lg shadow-md p-4">
                         <h3 className="text-lg font-semibold mb-2">Order Summary</h3>
                         <ul className="mb-4">
-                            {cartItems.map(item => (
+                            {
+                            cartItems.length === 0?
+                            <h1 className="">No items</h1>:  
+                            cartItems.map(item => (
                                 <li key={item.id} className="flex justify-between mb-2" data-price={totalPrice = +item.total_price}>
                                     <span>{item.name}</span>
                                     <span>₱{(item.total_price).toFixed(2)}</span>
                                 </li>
                             ))}
                         </ul>
+                        <div className="relative w-full my-2">
+
+                            <select name="mode" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " value={paymentMode.mode} onChange={handlePaymode} required>
+                                <option value="" >Payment Method</option>
+                                <option value="cod" >Cash on Delivery</option>
+                                <option value="gcash">G-Cash</option>
+                                <option value="cash">Cash</option>
+                            </select>
+
+                        </div>
                         <div className="flex justify-between font-bold border-t pt-2">
                             <span>Total:</span>
                             <span>₱{totalPrice}</span>
