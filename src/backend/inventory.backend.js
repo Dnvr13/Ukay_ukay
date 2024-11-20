@@ -24,7 +24,7 @@ export const useInsertProductBackend = () => {
                 throw new Error(`Error inserting product: ${insertInventoryError.message}`);
             }
 
-            const directoryImageForProduct = `${inventoryData[0].id}-${inventoryData[0].name}`
+            const directoryImageForProduct = `${inventoryData[0].id}-${generateUID(12)}`
             const uploads = await uploadImages(images, directoryImageForProduct)
             if (!uploads || uploads.length === 0) {
                 throw new Error("No images were uploaded.");
@@ -352,3 +352,17 @@ const getPublicUrl = async (filePath) => {
     const { data } = supabase.storage.from('products').getPublicUrl(filePath);
     return data.publicUrl;
 }
+
+
+const generateUID = (length = 10) => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    const uidArray = new Array(length);
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charactersLength);
+        uidArray[i] = characters[randomIndex];
+    }
+
+    return uidArray.join('');
+};
