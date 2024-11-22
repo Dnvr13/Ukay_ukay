@@ -133,8 +133,8 @@ const EditProductComp = ({ setEditProduct, productt, setSelectedProduct, handleR
 
                     </div>
                 </div>
-                <button type='submit' className={`text-white bg-sky-500 rounded p-2 m-2 text-base ${loadingBackend ? 'hidden' : ''}`}>
-                    Update product
+                <button type='submit' className={`text-white  rounded p-2 m-2 text-base ${loadingBackend ? 'bg-slate-300' : 'bg-sky-500 hover:bg-sky-400'}`}>
+                    {loadingBackend?"Loading...":"Update product"}
                 </button>
             </form>    
         </div>
