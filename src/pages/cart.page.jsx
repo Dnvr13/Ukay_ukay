@@ -208,7 +208,7 @@ const CartPage = () => {
                             cartItems.length === 0?
                             <h1 className="">No items</h1>:  
                             cartItems.map(item => (
-                                <li key={item.id} className="flex justify-between mb-2" data-price={totalPrice = +item.total_price}>
+                                <li key={item.id} className="flex justify-between mb-2" data-price={totalPrice +=item.total_price}>
                                     <span>{item.name}</span>
                                     <span>₱{(item.total_price).toFixed(2)}</span>
                                 </li>
