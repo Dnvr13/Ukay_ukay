@@ -15,7 +15,8 @@ export const loginBackend = async (emailOrUsername, password) => {
             .from("customers")
             .select("id,username")
             .or(`username.eq.${emailOrUsername},email.eq.${emailOrUsername}`)
-            .eq("password", password);
+            .eq("password", password)
+            .eq("is_deleted",0);
 
         if (error) {
             throw new Error(`Error occurred: ${error.message}`);
